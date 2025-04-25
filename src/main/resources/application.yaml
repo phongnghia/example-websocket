@@ -1,0 +1,31 @@
+server:
+  port: 8082
+version: "1.0.0-SNAPSHOT"
+
+spring:
+  application:
+    name: "example-websocket"
+  datasource:
+    url: "jdbc:mysql://localhost:3306/example-websocket?createDatabaseIfNotExist=true"
+    username: "@db_username@"
+    password: "@db_password@"
+    driver-class-name: "com.mysql.cj.jdbc.Driver"
+  jpa:
+    generate-ddl: true
+    hibernate:
+      ddl-auto: update
+#  elasticsearch:
+#    uris: https://localhost:9200
+#    username: "@es_username@"
+#    password: "@es_password@"
+#    ssl:
+#      enabled: true
+#      certificate-authorities: classpath:http_ca.crt
+
+logging:
+  level:
+    org:
+      springframework:
+        web:
+          socket: DEBUG
+        messaging: DEBUG

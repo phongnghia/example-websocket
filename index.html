@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebSocket STOMP Tester</title>
+    <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #4361ee;
+            --secondary: #3f37c9;
+            --success: #4cc9f0;
+            --danger: #f72585;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --gray: #6c757d;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #f5f7fa;
+            color: var(--dark);
+            line-height: 1.6;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+
+        h1 {
+            font-weight: 500;
+            font-size: 1.8rem;
+        }
+
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            padding: 20px;
+            background-color: var(--light);
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        button.connect {
+            background-color: var(--success);
+            color: white;
+        }
+
+        button.get-all {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        button.add {
+            background-color: var(--danger);
+            color: white;
+        }
+
+        button:disabled {
+            background-color: var(--gray);
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+            opacity: 0.7;
+        }
+
+        .output-container {
+            padding: 20px;
+        }
+
+        #output {
+            background-color: #1e1e1e;
+            color: #d4d4d4;
+            padding: 15px;
+            border-radius: 5px;
+            font-family: 'Courier New', Courier, monospace;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            overflow-y: auto;
+            max-height: 400px;
+            min-height: 200px;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        .status {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+            background-color: #dc3545;
+        }
+
+        .status.connected {
+            background-color: #28a745;
+        }
+
+        .connection-status {
+            display: flex;
+            align-items: center;
+            margin-left: auto;
+            color: var(--gray);
+            font-size: 0.9rem;
+        }
+
+        .product-form {
+            display: none;
+            padding: 20px;
+            background-color: #f8f9fa;
+            border-radius: 5px;
+            margin-top: 10px;
+        }
+
+        .product-form.active {
+            display: block;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+
+        input {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid #ced4da;
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        @media (max-width: 768px) {
+            .controls {
+                flex-direction: column;
+            }
+
+            .connection-status {
+                margin-left: 0;
+                margin-top: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <header>
+        <h1>WebSocket STOMP Tester</h1>
+    </header>
+
+    <div class="controls">
+        <button id="connectBtn" class="connect" onclick="connect()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M5 12h14M12 5l7 7-7 7"></path>
+            </svg>
+            Connect
+        </button>
+
+        <button id="getAllBtn" class="get-all" onclick="sendGetAll()" disabled>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                <circle cx="9" cy="7" r="4"></circle>
+                <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+            </svg>
+            GET ALL Products
+        </button>
+
+        <button id="addBtn" class="add" onclick="toggleProductForm()" disabled>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="12" y1="5" x2="12" y2="19"></line>
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+            </svg>
+            ADD Product
+        </button>
+
+        <div class="connection-status">
+            <span id="statusIndicator" class="status"></span>
+            <span id="statusText">Disconnected</span>
+        </div>
+    </div>
+
+    <div id="productForm" class="product-form">
+        <div class="form-group">
+            <label for="productName">Product Name</label>
+            <input type="text" id="productName" placeholder="Enter product name">
+        </div>
+        <div class="form-group">
+            <label for="productPrice">Price</label>
+            <input type="number" id="productPrice" placeholder="Enter price" step="0.01">
+        </div>
+        <div class="form-group">
+            <label for="productPrice">Description</label>
+            <input type="text" id="productDescription" placeholder="Enter price" step="0.01">
+        </div>
+        <div class="form-actions">
+            <button class="add" onclick="sendAdd()">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path>
+                </svg>
+                Submit
+            </button>
+            <button onclick="toggleProductForm()" style="background-color: var(--gray);">
+                Cancel
+            </button>
+        </div>
+    </div>
+
+    <div class="output-container">
+        <h3>WebSocket Messages:</h3>
+        <pre id="output"></pre>
+    </div>
+</div>
+
+<script>
+    let stompClient = null;
+    const connectBtn = document.getElementById('connectBtn');
+    const getAllBtn = document.getElementById('getAllBtn');
+    const addBtn = document.getElementById('addBtn');
+    const statusIndicator = document.getElementById('statusIndicator');
+    const statusText = document.getElementById('statusText');
+    const productForm = document.getElementById('productForm');
+
+    function updateConnectionStatus(connected) {
+        if (connected) {
+            statusIndicator.classList.add('connected');
+            statusText.textContent = 'Connected';
+            connectBtn.disabled = true;
+            getAllBtn.disabled = false;
+            addBtn.disabled = false;
+        } else {
+            statusIndicator.classList.remove('connected');
+            statusText.textContent = 'Disconnected';
+            connectBtn.disabled = false;
+            getAllBtn.disabled = true;
+            addBtn.disabled = true;
+            productForm.classList.remove('active');
+        }
+    }
+
+    function toggleProductForm() {
+        productForm.classList.toggle('active');
+    }
+
+    function connect() {
+        const socket = new SockJS("http://localhost:8082/example-websocket");
+        stompClient = Stomp.over(socket);
+
+        connectBtn.disabled = true;
+        statusText.textContent = 'Connecting...';
+
+        stompClient.connect({}, function (frame) {
+            const timestamp = new Date().toLocaleTimeString();
+            document.getElementById("output").innerText += `[${timestamp}] Connected: ${frame}\n`;
+            updateConnectionStatus(true);
+
+            stompClient.subscribe("/topic/products", function (message) {
+                const timestamp = new Date().toLocaleTimeString();
+                document.getElementById("output").innerText += `[${timestamp}] Received: ${message.body}\n`;
+                // Auto-scroll to bottom
+                const output = document.getElementById("output");
+                output.scrollTop = output.scrollHeight;
+            });
+        }, function(error) {
+            const timestamp = new Date().toLocaleTimeString();
+            document.getElementById("output").innerText += `[${timestamp}] Connection error: ${error}\n`;
+            updateConnectionStatus(false);
+        });
+    }
+
+    function sendGetAll() {
+        const timestamp = new Date().toLocaleTimeString();
+        document.getElementById("output").innerText += `[${timestamp}] Sending GET ALL request...\n`;
+        stompClient.send("/app/products.getAll", {}, JSON.stringify({}));
+    }
+
+    function sendAdd() {
+        const productName = document.getElementById('productName').value;
+        const productPrice = parseFloat(document.getElementById('productPrice').value);
+        const productDescription = document.getElementById('productDescription').value;
+
+        if (!productName || isNaN(productPrice)) {
+            alert('Please enter valid product name and price');
+            return;
+        }
+
+        const newProduct = {
+            productName: productName,
+            price: productPrice,
+            productDescription: productDescription
+        };
+
+        const timestamp = new Date().toLocaleTimeString();
+        document.getElementById("output").innerText += `[${timestamp}] Sending ADD request: ${JSON.stringify(newProduct)}\n`;
+        stompClient.send("/app/products.save", {}, JSON.stringify(newProduct));
+
+        // Clear form and hide it
+        document.getElementById('productName').value = '';
+        document.getElementById('productPrice').value = '';
+        document.getElementById('productDescription').value = '';
+        productForm.classList.remove('active');
+    }
+
+    // Initialize status
+    updateConnectionStatus(false);
+</script>
+</body>
+</html>
