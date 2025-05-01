@@ -27,6 +27,7 @@
 		<elasticsearch.java.version>8.17.1</elasticsearch.java.version>
 		<lombok.version>1.18.34</lombok.version>
 		<mapstruct.version>1.6.2</mapstruct.version>
+		<jackson.version>2.17.2</jackson.version>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -49,6 +50,11 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-websocket</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-messaging</artifactId>
 		</dependency>
 
 		<dependency>
@@ -91,6 +97,19 @@
 			<artifactId>mapstruct-processor</artifactId>
 			<version>${mapstruct.version}</version>
 		</dependency>
+
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-core</artifactId>
+			<version>${jackson.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-databind</artifactId>
+			<version>${jackson.version}</version>
+		</dependency>
+
 	</dependencies>
 
 	<build>

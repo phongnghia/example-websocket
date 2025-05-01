@@ -42,3 +42,7 @@ id:sub-1
 ^@
 
 ```
+
+# System context diagram
+
+![img.png](img.png)
