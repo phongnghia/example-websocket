@@ -49,11 +49,9 @@ function showSuccess(message) {
     content.textContent = message;
     overlay.classList.add('active');
     
-    // Đóng thông báo khi click các nút
     overlay.querySelector('.notification-close').onclick = () => hideSuccess();
     overlay.querySelector('.notification-button').onclick = () => hideSuccess();
     
-    // Đóng khi click ra ngoài
     overlay.onclick = (e) => {
         if (e.target === overlay) hideSuccess();
     };
