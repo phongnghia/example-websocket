@@ -1,5 +1,6 @@
 package com.phongnghia.example_websocket.controller;
 
+import com.phongnghia.example_websocket.dto.ResponseDto;
 import com.phongnghia.example_websocket.dto.UserDto;
 import com.phongnghia.example_websocket.service.SendMessageService;
 import com.phongnghia.example_websocket.service.UserService;
@@ -25,14 +26,18 @@ public class UserWebsocketController {
 
     @MessageMapping("/user.create")
     @SendTo("/topic/user")
-    public void createUser(@Payload UserDto userDto) {
-        m_userService.addUser(userDto);
+    public ResponseDto<?> createUser(@Payload UserDto userDto) {
+        return m_userService.addUser(userDto)
+                .map(user -> ResponseDto.builder().isSuccess(true).data(userDto).build())
+                .orElse(ResponseDto.builder().isSuccess(false).build());
     }
 
     @MessageMapping("/user.id")
     @SendTo("/topic/user")
-    public UserDto findUserById(@Payload UUID id){
-        return m_userService.findUserById(id).orElse(null);
+    public ResponseDto<?> findUserById(@Payload UUID id){
+        return m_userService.findUserById(id)
+                .map(userDto -> ResponseDto.builder().isSuccess(true).data(userDto).build())
+                .orElse(ResponseDto.builder().isSuccess(false).build());
     }
 
     @MessageMapping("/user.all")

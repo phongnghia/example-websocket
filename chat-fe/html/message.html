@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat Application</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/styles.css">
+</head>
+
+<body>
+    <!-- Auth Screen -->
+    <div class="auth-container" id="authContainer">
+        <div class="auth-form">
+            <h1 class="auth-title">Chat Application</h1>
+
+            <div class="auth-tabs">
+                <div class="auth-tab active" id="accessTab">Access</div>
+                <div class="auth-tab" id="createTab">Create</div>
+            </div>
+
+            <!-- Login Form -->
+            <div id="accessForm">
+                <div class="form-group">
+                    <label for="accessUserId">User ID</label>
+                    <input type="text" id="accessUserId" class="form-control" placeholder="Enter your id">
+                </div>
+                <!-- <div class="form-group">
+                    <label for="accessUsername">Username</label>
+                    <input type="text" id="accessUsername" class="form-control" placeholder="Enter your username">
+                </div> -->
+                <button class="btn" id="accessBtn">Access</button>
+            </div>
+
+            <!-- Register Form -->
+            <div id="createForm" class="hidden">
+                <div class="form-group">
+                    <label for="createUsername">Username</label>
+                    <input type="text" id="createUsername" class="form-control" placeholder="Choose a username">
+                </div>
+                <div class="form-group">
+                    <label for="createFullName">Full Name</label>
+                    <input type="text" id="createFullName" class="form-control" placeholder="Your full name">
+                </div>
+                <div class="form-group">
+                    <label for="createDescription">Description</label>
+                    <input type="text" id="createDescription" class="form-control" placeholder="Enter a description">
+                </div>
+                <button class="btn" id="createBtn">Create</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Chat Application (hidden initially) -->
+    <div class="app-container hidden" id="appContainer">
+        <!-- Left Sidebar -->
+        <div class="sidebar">
+            <div class="user-header">
+                <h2>Chat App</h2>
+                <div class="user-status">Connected</div>
+            </div>
+
+            <div class="user-profile">
+                <div class="user-avatar" id="currentUserAvatar">US</div>
+                <div class="user-details">
+                    <div class="user-name" id="currentUserName">User</div>
+                    <div class="user-item-id" id="currentUserId"></div>
+                </div>
+            </div>
+
+            <div class="search-box">
+                <input type="text" class="search-input" id="userSearch" placeholder="Search users...">
+            </div>
+
+            <div class="user-list" id="userList">
+                <!-- Users will be loaded here from database -->
+            </div>
+        </div>
+
+        <!-- Right Chat Area -->
+        <div class="chat-area">
+            <div class="chat-header">
+                <div class="chat-header-avatar" id="chatPartnerAvatar">CH</div>
+                <div class="chat-header-info">
+                    <div class="chat-header-name" id="chatPartnerName">Select a user to chat</div>
+                    <div class="chat-header-status">Offline</div>
+                </div>
+            </div>
+
+            <div class="chat-messages" id="chatMessages">
+                <!-- Messages will appear here -->
+                <div class="welcome-message">
+                    <p>Select a user from the sidebar to start chatting</p>
+                </div>
+            </div>
+
+            <div class="chat-input-area">
+                <div style="position: relative;">
+                    <textarea class="message-input" id="messageInput" placeholder="Type your message here..."
+                        disabled></textarea>
+                    <button class="send-button" id="sendButton" disabled>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="22" y1="2" x2="11" y2="13"></line>
+                            <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Popup error -->
+    <div class="notification-overlay" id="notificationOverlay">
+        <div class="notification-box">
+            <div class="notification-header">
+                <div class="notification-title">Error</div>
+                <button class="notification-close" id="notificationClose">&times;</button>
+            </div>
+            <div class="notification-content" id="notificationContent">
+                An error occurred.
+            </div>
+            <div class="notification-footer">
+                <button class="notification-button" id="notificationButton">OK</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Popup success -->
+    <div class="notification-overlay" id="successOverlay">
+        <div class="notification-box">
+            <div class="notification-header success">
+                <div class="notification-title">Success</div>
+                <button class="notification-close">&times;</button>
+            </div>
+            <div class="notification-content" id="successContent">
+                Operation completed successfully.
+            </div>
+            <div class="notification-footer">
+                <button class="notification-button success">OK</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.5.2/sockjs.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+    <script type="module" src="../js/global.js"></script>
+    <script src="../js/behavior.js"></script>
+    <script type="module" src="../js/user.js"></script>
+</body>
+
+</html>

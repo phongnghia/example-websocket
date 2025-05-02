@@ -1,0 +1,64 @@
+// Validate UUID
+function isValidUUID(uuid) {
+    const regex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+    return regex.test(uuid);
+}
+
+// Tab switching
+accessTab.addEventListener('click', () => {
+    accessTab.classList.add('active');
+    createTab.classList.remove('active');
+    accessForm.classList.remove('hidden');
+    createForm.classList.add('hidden');
+});
+
+// Create tab
+createTab.addEventListener('click', () => {
+    createTab.classList.add('active');
+    accessTab.classList.remove('active');
+    createForm.classList.remove('hidden');
+    accessForm.classList.add('hidden');
+});
+
+function showError(message) {
+    const notificationOverlay = document.getElementById('notificationOverlay');
+    const notificationContent = document.getElementById('notificationContent');
+    
+    notificationContent.textContent = message;
+    notificationOverlay.classList.add('active');
+    
+    document.getElementById('notificationClose').addEventListener('click', hideError);
+    document.getElementById('notificationButton').addEventListener('click', hideError);
+    
+    notificationOverlay.addEventListener('click', function(e) {
+        if (e.target === notificationOverlay) {
+            hideError();
+        }
+    });
+}
+
+function hideError() {
+    document.getElementById('notificationOverlay').classList.remove('active');
+    window.location.reload();
+}
+
+function showSuccess(message) {
+    const overlay = document.getElementById('successOverlay');
+    const content = document.getElementById('successContent');
+    
+    content.textContent = message;
+    overlay.classList.add('active');
+    
+    // Đóng thông báo khi click các nút
+    overlay.querySelector('.notification-close').onclick = () => hideSuccess();
+    overlay.querySelector('.notification-button').onclick = () => hideSuccess();
+    
+    // Đóng khi click ra ngoài
+    overlay.onclick = (e) => {
+        if (e.target === overlay) hideSuccess();
+    };
+}
+
+function hideSuccess() {
+    document.getElementById('successOverlay').classList.remove('active');
+}
