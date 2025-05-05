@@ -1,8 +1,8 @@
-package com.phongnghia.example_websocket.controller;
+package com.phongnghia.example_websocket.controller.rest;
 
 import com.phongnghia.example_websocket.dto.ResponseDto;
-import com.phongnghia.example_websocket.dto.UserDto;
-import com.phongnghia.example_websocket.service.UserService;
+import com.phongnghia.example_websocket.dto.user.UserDto;
+import com.phongnghia.example_websocket.service.user.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

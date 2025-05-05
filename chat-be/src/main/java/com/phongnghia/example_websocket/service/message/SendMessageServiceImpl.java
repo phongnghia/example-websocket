@@ -1,9 +1,9 @@
-package com.phongnghia.example_websocket.service;
+package com.phongnghia.example_websocket.service.message;
 
-import com.phongnghia.example_websocket.dto.ReceiveMessageQuery;
-import com.phongnghia.example_websocket.dto.SendQueryRequest;
-import com.phongnghia.example_websocket.entity.UserEntity;
-import com.phongnghia.example_websocket.entity.UserMessageEntity;
+import com.phongnghia.example_websocket.dto.message.ReceiveMessageQuery;
+import com.phongnghia.example_websocket.dto.message.SendQueryRequest;
+import com.phongnghia.example_websocket.entity.user.UserEntity;
+import com.phongnghia.example_websocket.entity.message.UserMessageEntity;
 import com.phongnghia.example_websocket.repository.UserMessageRepository;
 import com.phongnghia.example_websocket.repository.UserRepository;
 import org.springframework.stereotype.Service;

@@ -1,5 +1,6 @@
-package com.phongnghia.example_websocket.entity;
+package com.phongnghia.example_websocket.entity.user;
 
+import com.phongnghia.example_websocket.entity.message.UserMessageEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;

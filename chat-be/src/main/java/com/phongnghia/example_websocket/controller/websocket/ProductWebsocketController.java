@@ -1,4 +1,4 @@
-package com.phongnghia.example_websocket.controller;
+package com.phongnghia.example_websocket.controller.websocket;
 
 import com.phongnghia.example_websocket.dto.ProductDto;
 import com.phongnghia.example_websocket.service.ProductService;

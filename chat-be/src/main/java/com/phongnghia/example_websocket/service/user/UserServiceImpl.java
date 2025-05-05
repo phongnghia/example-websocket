@@ -1,7 +1,7 @@
-package com.phongnghia.example_websocket.service;
+package com.phongnghia.example_websocket.service.user;
 
-import com.phongnghia.example_websocket.dto.UserDto;
-import com.phongnghia.example_websocket.entity.UserEntity;
+import com.phongnghia.example_websocket.dto.user.UserDto;
+import com.phongnghia.example_websocket.entity.user.UserEntity;
 import com.phongnghia.example_websocket.mapper.WebSocketConverter;
 import com.phongnghia.example_websocket.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;

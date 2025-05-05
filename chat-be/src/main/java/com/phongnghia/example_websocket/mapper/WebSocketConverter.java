@@ -1,9 +1,9 @@
 package com.phongnghia.example_websocket.mapper;
 
 import com.phongnghia.example_websocket.dto.ProductDto;
-import com.phongnghia.example_websocket.dto.UserDto;
+import com.phongnghia.example_websocket.dto.user.UserDto;
 import com.phongnghia.example_websocket.entity.ProductEntity;
-import com.phongnghia.example_websocket.entity.UserEntity;
+import com.phongnghia.example_websocket.entity.user.UserEntity;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 

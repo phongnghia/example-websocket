@@ -1,17 +1,14 @@
-package com.phongnghia.example_websocket.controller;
+package com.phongnghia.example_websocket.controller.websocket;
 
-import com.phongnghia.example_websocket.dto.ReceiveMessageQuery;
-import com.phongnghia.example_websocket.dto.SendQueryRequest;
-import com.phongnghia.example_websocket.dto.UserDto;
-import com.phongnghia.example_websocket.service.SendMessageService;
-import com.phongnghia.example_websocket.service.UserService;
+import com.phongnghia.example_websocket.dto.message.ReceiveMessageQuery;
+import com.phongnghia.example_websocket.dto.message.SendQueryRequest;
+import com.phongnghia.example_websocket.service.message.SendMessageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.stereotype.Controller;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;

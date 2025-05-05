@@ -1,5 +1,6 @@
-package com.phongnghia.example_websocket.entity;
+package com.phongnghia.example_websocket.entity.message;
 
+import com.phongnghia.example_websocket.entity.user.UserEntity;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;

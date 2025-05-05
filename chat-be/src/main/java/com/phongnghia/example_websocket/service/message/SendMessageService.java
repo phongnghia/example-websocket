@@ -1,7 +1,7 @@
-package com.phongnghia.example_websocket.service;
+package com.phongnghia.example_websocket.service.message;
 
-import com.phongnghia.example_websocket.dto.ReceiveMessageQuery;
-import com.phongnghia.example_websocket.dto.SendQueryRequest;
+import com.phongnghia.example_websocket.dto.message.ReceiveMessageQuery;
+import com.phongnghia.example_websocket.dto.message.SendQueryRequest;
 
 import java.util.List;
 import java.util.Optional;

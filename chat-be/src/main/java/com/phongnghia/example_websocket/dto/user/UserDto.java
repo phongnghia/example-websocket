@@ -1,6 +1,5 @@
-package com.phongnghia.example_websocket.dto;
+package com.phongnghia.example_websocket.dto.user;
 
-import com.phongnghia.example_websocket.entity.UserEntity;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -12,12 +11,13 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class UserMessageDto {
+public class UserDto {
 
     private UUID id;
 
-    private String message;
+    private String username;
 
-    private UserEntity user;
+    private String fullName;
 
+    private String description;
 }

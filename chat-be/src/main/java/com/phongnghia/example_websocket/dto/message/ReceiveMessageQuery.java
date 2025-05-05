@@ -1,4 +1,4 @@
-package com.phongnghia.example_websocket.dto;
+package com.phongnghia.example_websocket.dto.message;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

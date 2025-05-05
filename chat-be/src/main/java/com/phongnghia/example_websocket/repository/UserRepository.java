@@ -1,6 +1,6 @@
 package com.phongnghia.example_websocket.repository;
 
-import com.phongnghia.example_websocket.entity.UserEntity;
+import com.phongnghia.example_websocket.entity.user.UserEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

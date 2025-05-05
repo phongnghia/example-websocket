@@ -1,6 +1,6 @@
-package com.phongnghia.example_websocket.service;
+package com.phongnghia.example_websocket.service.user;
 
-import com.phongnghia.example_websocket.dto.UserDto;
+import com.phongnghia.example_websocket.dto.user.UserDto;
 
 import java.util.List;
 import java.util.Optional;
