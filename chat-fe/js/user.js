@@ -7,8 +7,7 @@ let newUserId = null;
 
 // ========== //
 
-let currentUser = null;
-let currentChatUser = null;
+let currentUser = {};
 
 // First controller
 const authContainer = document.getElementById('authContainer');
@@ -16,59 +15,50 @@ const appContainer = document.getElementById('appContainer');
 /// Tab
 const accessTab = document.getElementById('accessTab');
 const createTab = document.getElementById('createTab');
-/// Form
-const accessForm = document.getElementById('accessForm');
-const createForm = document.getElementById('createForm');
 /// Button
 const accessBtn = document.getElementById('accessBtn');
 const createBtn = document.getElementById('createBtn');
+const logoutBtn = document.getElementById('userLogout');
 
 // Second controller
 const userList = document.getElementById('userList');
-const chatMessages = document.getElementById('chatMessages');
 const messageInput = document.getElementById('messageInput');
-const sendButton = document.getElementById('sendButton');
 const currentUserAvatar = document.getElementById('currentUserAvatar');
 const currentUserName = document.getElementById('currentUserName');
 const currentUserId = document.getElementById('currentUserId');
 
-const chatPartnerAvatar = document.getElementById('chatPartnerAvatar');
-const chatPartnerName = document.getElementById('chatPartnerName');
-
 // WebSocket connection
 stompClient.connect({}, function (frame) {
-    console.log('Connected: ' + frame);
-    console.log(findAllUsers());
+    loadMainPage();
     stompClient.subscribe('/topic/user', function (response) {
         users = JSON.parse(response.body);
-        if (!Array.isArray(users)) {
-            if (users.success === true) {
-                currentUser = users.data;
-
-                currentUserAvatar.textContent = currentUser.fullName
-                                                    .split(" ")
-                                                    .map(word => word[0])
-                                                    .join('')
-                                                    .slice(0, 2);
-                currentUserName.textContent = currentUser.fullName;
-                currentUserId.textContent = currentUser.id;
-
-                authContainer.classList.add('hidden');
-                appContainer.classList.remove('hidden');
-
-                console.log(`Accessed with user ${currentUser.fullName}`);
-                findAllUsers();
-            } else {
-                showError("User not found");
-                return 1;
-            }
-        }
         displayUserResponse(users);
     });
-    stompClient.subscribe('/topic/messages', function (response) {
-        messages = JSON.parse(response.body);
-    });
 });
+
+function loadMainPage(){
+    let getLocalStorageItem = JSON.parse(localStorage.getItem("user"));
+
+    if (getLocalStorageItem && getLocalStorageItem != null) currentUser = getLocalStorageItem;
+
+    if (currentUser && currentUser.id) {
+
+        currentUserAvatar.textContent = currentUser.fullName
+                                                .split(" ")
+                                                .map(word => word[0])
+                                                .join("")
+                                                .slice(0,2);
+        currentUserName.textContent = currentUser.fullName;
+        currentUserId.textContent = currentUser.id;
+
+        authContainer.classList.add('hidden');
+        appContainer.classList.remove('hidden');
+
+        console.log(`Accessed with user ${currentUser.fullName}`);
+
+        findAllUsers();
+    }
+}
 
 function findAllUsers() {
     stompClient.send("/app/user.all", {}, JSON.stringify());
@@ -76,7 +66,43 @@ function findAllUsers() {
 }
 
 function findUserById(id) {
-    stompClient.send('/app/user.id', {}, JSON.stringify(id));
+    fetch(apiURL + "/find/" + id, {
+        method: 'GET'
+    })
+        .then(response => response.json())
+        .then(data => {
+            currentUser = data.data;
+            // Set localstorage
+            localStorage.setItem("user", JSON.stringify(currentUser));
+            loadMainPage();
+        })
+        .catch(error => {
+            showError("Oops! Something went wrong on our end!");
+            console.error(error);
+            accessTab.click();
+        })
+}
+
+function createNewUser(newUser) {
+    fetch(apiURL + "/add", {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(newUser)
+    })
+        .then(response => response.json())
+        .then(data => {
+            newUserId = data.data.id;
+            document.getElementById('accessUserId').value = newUserId;
+            showSuccess("Registration successful!. \nYour ID should be remembered");
+            accessTab.click();
+        })
+        .catch(error => {
+            showError(error);
+            console.error(error);
+            createTab.click();
+        })
 }
 
 // ========== //
@@ -84,14 +110,18 @@ function findUserById(id) {
 // Access function
 accessBtn.addEventListener('click', () => {
     const userId = document.getElementById('accessUserId').value;
-    // const username = document.getElementById('accessUsername').value;
 
     if (!userId) {
         showError("UserId is required");
         return 1;
     }
 
-    checkingUser(userId);
+    if (!isValidUUID(userId)) {
+        showError("UserId is not valid. It must be a UUID string");
+        return 1;
+    }
+
+    findUserById(userId);
 });
 
 // Create function
@@ -100,13 +130,6 @@ createBtn.addEventListener('click', () => {
     const fullName = document.getElementById('createFullName').value;
     const description = document.getElementById('createDescription').value;
 
-    createUser(username, fullName, description);
-});
-
-// ========== //
-
-// Create user
-function createUser(username, fullName, description) {
     console.log(`Creating user: ${username}, ${fullName}, ${description}`);
 
     if (!username) {
@@ -121,55 +144,17 @@ function createUser(username, fullName, description) {
         description: description
     }
 
-    fetch(apiURL + "/add", {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(newUser)
-    })
-    .then(response => response.json())
-    .then(data => {
-        newUserId = data.data.id;
-        document.getElementById('accessUserId').value = newUserId;
-        showSuccess("Registration successful!. \nYour ID should be remembered");
-        accessTab.click();
-    })
-    .catch(error =>  {
-        showError("Oops! That username is taken");
-        createTab.click();
-    })
-}
+    createNewUser(newUser);
+});
 
-// Access checking
-function checkingUser(userId) {
-    console.log(`Checking user: ${userId}`);
+// Logout button
+logoutBtn.addEventListener('click', () => {
+    localStorage.clear();
+    window.location.reload();
+});
 
-    currentUser = {
-        id: userId
-    };
 
-    loadUsers(currentUser);
-}
-
-// Load user from database
-function loadUsers(user) {
-    // Get user
-    const userId = user.id;
-
-    if (!userId) {
-        window.location.reload();
-        showError("UserId is required");
-        return 1;
-    }
-
-    if (!isValidUUID(userId)) {
-        showError("UserId is not valid. It must be a UUID string");
-        return 1;
-    }
-
-    findUserById(userId);
-}
+// ========== //
 
 // Render user list
 function renderUserList() {
@@ -199,7 +184,7 @@ function renderUserList() {
             <div class="user-item-info">
                 <div class="user-item-name">${user.fullName}</div>
                 <div class="user-item-username">@${user.username}</div>
-                <div class="user-item-id">${user.id}</div>
+                <!--<div class="user-item-id">${user.id}</div>-->
             </div>
         `;
 

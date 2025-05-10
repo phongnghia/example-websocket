@@ -457,7 +457,7 @@ body {
 
 .notification-header {
     padding: 1rem 1.5rem;
-    background-color: #eb0202;
+    background-color: #ff6d6d;
     color: white;
     display: flex;
     justify-content: space-between;
@@ -485,6 +485,7 @@ body {
 .notification-content {
     padding: 1.5rem;
     color: var(--dark);
+    font-family: serif;
 }
 
 .notification-footer {
@@ -496,7 +497,7 @@ body {
 
 .notification-button {
     padding: 0.5rem 1rem;
-    background-color: #eb0202;
+    background-color: #ff6d6d;
     color: white;
     border: none;
     border-radius: var(--border-radius);
@@ -509,9 +510,21 @@ body {
 }
 
 .notification-button:hover {
-    background-color: #df3f3f;
+    background-color: #db5b5b;
 }
 
 .notification-button.success:hover {
     background-color: #37a15c;
+}
+
+/* Logout */
+.user-logout {
+    display: block;
+    padding: 0.5rem 0;
+    background-color: var(--primary);
+    color: white;
+    border: none;
+    font-family: inherit;
+    cursor: pointer;
+    transition: var(--transition);
 }

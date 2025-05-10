@@ -5,6 +5,7 @@ import com.phongnghia.example_websocket.entity.user.UserEntity;
 import com.phongnghia.example_websocket.mapper.WebSocketConverter;
 import com.phongnghia.example_websocket.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -19,10 +20,15 @@ public class UserServiceImpl implements UserService{
 
     private final WebSocketConverter m_converter;
 
+    private final SimpMessagingTemplate m_simpMessagingTemplate;
+
     @Autowired
-    public UserServiceImpl(WebSocketConverter converter, UserRepository userRepository){
+    public UserServiceImpl(WebSocketConverter converter,
+                           UserRepository userRepository,
+                           SimpMessagingTemplate simpMessagingTemplate){
         this.m_converter = converter;
         this.m_userRepository = userRepository;
+        this.m_simpMessagingTemplate = simpMessagingTemplate;
     }
 
     @Override
@@ -45,5 +51,11 @@ public class UserServiceImpl implements UserService{
                 .stream()
                 .map(user -> Optional.of(m_converter.entityToDto(user)))
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public void sendMessageToSubscriberUser(UUID id, Object message) {
+        String destination = String.format("/topic/user/%s", id.toString());
+        m_simpMessagingTemplate.convertAndSend(destination, message);
     }
 }

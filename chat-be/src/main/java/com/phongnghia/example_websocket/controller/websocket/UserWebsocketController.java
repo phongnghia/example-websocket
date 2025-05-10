@@ -12,7 +12,6 @@ import org.springframework.stereotype.Controller;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 @Controller
 public class UserWebsocketController {
@@ -29,14 +28,6 @@ public class UserWebsocketController {
     public ResponseDto<?> createUser(@Payload UserDto userDto) {
         return m_userService.addUser(userDto)
                 .map(user -> ResponseDto.builder().isSuccess(true).data(userDto).build())
-                .orElse(ResponseDto.builder().isSuccess(false).build());
-    }
-
-    @MessageMapping("/user.id")
-    @SendTo("/topic/user")
-    public ResponseDto<?> findUserById(@Payload UUID id){
-        return m_userService.findUserById(id)
-                .map(userDto -> ResponseDto.builder().isSuccess(true).data(userDto).build())
                 .orElse(ResponseDto.builder().isSuccess(false).build());
     }
 
