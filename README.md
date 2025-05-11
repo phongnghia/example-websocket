@@ -2,7 +2,7 @@
 
 # Getting Started
 
-## Java 17 + Spring boot + mysql 
+## Java + Spring boot + mysql 
 
 > [!NOTE]
 > Elasticsearch - deprecated - will update it later
