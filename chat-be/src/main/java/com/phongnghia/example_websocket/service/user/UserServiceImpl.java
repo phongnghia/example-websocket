@@ -52,10 +52,4 @@ public class UserServiceImpl implements UserService{
                 .map(user -> Optional.of(m_converter.entityToDto(user)))
                 .collect(Collectors.toList());
     }
-
-    @Override
-    public void sendMessageToSubscriberUser(UUID id, Object message) {
-        String destination = String.format("/topic/user/%s", id.toString());
-        m_simpMessagingTemplate.convertAndSend(destination, message);
-    }
 }

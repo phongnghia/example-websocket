@@ -1,13 +1,13 @@
-import { apiURL, stompClient, generateSessionId } from './global.js';
+import { apiURL, stompClient, avatarUser, generateSessionId } from './global.js';
+import { selectChatUser } from './message.js';
 
 let users = [];
-let messages = [];
 let data = [];
 let newUserId = null;
 
 // ========== //
 
-let currentUser = {};
+export let currentUser = {};
 
 // First controller
 const authContainer = document.getElementById('authContainer');
@@ -30,10 +30,6 @@ const currentUserId = document.getElementById('currentUserId');
 // WebSocket connection
 stompClient.connect({}, function (frame) {
     loadMainPage();
-    stompClient.subscribe('/topic/user', function (response) {
-        users = JSON.parse(response.body);
-        displayUserResponse(users);
-    });
 });
 
 function loadMainPage(){
@@ -42,12 +38,17 @@ function loadMainPage(){
     if (getLocalStorageItem && getLocalStorageItem != null) currentUser = getLocalStorageItem;
 
     if (currentUser && currentUser.id) {
+        stompClient.subscribe("/topic/user", function (response) {
+            users = JSON.parse(response.body);
+            displayUserResponse(users);
+        });
 
-        currentUserAvatar.textContent = currentUser.fullName
-                                                .split(" ")
-                                                .map(word => word[0])
-                                                .join("")
-                                                .slice(0,2);
+        stompClient.subscribe(`/queue/private/${currentUser.id}`, function(response){
+            let checkStatus = JSON.parse(response.body);
+            console.log(checkStatus);
+        });
+
+        currentUserAvatar.textContent = avatarUser(currentUser.fullName);
         currentUserName.textContent = currentUser.fullName;
         currentUserId.textContent = currentUser.id;
 
@@ -56,6 +57,7 @@ function loadMainPage(){
 
         console.log(`Accessed with user ${currentUser.fullName}`);
 
+        subscribePrivateMessage(currentUser.id);
         findAllUsers();
     }
 }
@@ -65,6 +67,10 @@ function findAllUsers() {
     return 0;
 }
 
+function subscribePrivateMessage(id){
+    stompClient.send("/app/user.subscribe", {}, JSON.stringify(id));
+}
+
 function findUserById(id) {
     fetch(apiURL + "/find/" + id, {
         method: 'GET'
@@ -72,7 +78,6 @@ function findUserById(id) {
         .then(response => response.json())
         .then(data => {
             currentUser = data.data;
-            // Set localstorage
             localStorage.setItem("user", JSON.stringify(currentUser));
             loadMainPage();
         })

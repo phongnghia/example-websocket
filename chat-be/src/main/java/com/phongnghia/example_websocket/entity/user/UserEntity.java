@@ -25,7 +25,7 @@ public class UserEntity {
 
     private String description;
 
-    @OneToMany( mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany( mappedBy = "sender", cascade = CascadeType.ALL, fetch = FetchType.LAZY )
     private List<UserMessageEntity> messages;
 
 }

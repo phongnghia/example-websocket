@@ -8,33 +8,42 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.handler.annotation.SendTo;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Controller
 public class UserWebsocketController {
 
     private final UserService m_userService;
 
-    @Autowired
-    public UserWebsocketController(SendMessageService sendMessageService, UserService userService) {
-        this.m_userService = userService;
-    }
+    private final SimpMessagingTemplate m_simpMessagingTemplate;
 
-    @MessageMapping("/user.create")
-    @SendTo("/topic/user")
-    public ResponseDto<?> createUser(@Payload UserDto userDto) {
-        return m_userService.addUser(userDto)
-                .map(user -> ResponseDto.builder().isSuccess(true).data(userDto).build())
-                .orElse(ResponseDto.builder().isSuccess(false).build());
+    private final String DESTINATION = "/queue/private/";
+
+    @Autowired
+    public UserWebsocketController(
+            SimpMessagingTemplate simpMessagingTemplate,
+            UserService userService) {
+        this.m_simpMessagingTemplate = simpMessagingTemplate;
+        this.m_userService = userService;
     }
 
     @MessageMapping("/user.all")
     @SendTo("/topic/user")
     public List<Optional<UserDto>> findAll(){
         return m_userService.findAll();
+    }
+
+    @MessageMapping("/user.subscribe")
+    public void subscribePrivateMessage(@Payload UUID id){
+        m_simpMessagingTemplate.convertAndSend(
+                DESTINATION + id.toString(),
+                ResponseDto.builder().isSuccess(true).build()
+        );
     }
 
 }

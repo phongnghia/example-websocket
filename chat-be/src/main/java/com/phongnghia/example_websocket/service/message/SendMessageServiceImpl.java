@@ -26,18 +26,19 @@ public class SendMessageServiceImpl implements SendMessageService{
     }
 
     @Override
-    public Optional<ReceiveMessageQuery> sendMessage(SendQueryRequest send) {
+    public void sendMessage(SendQueryRequest send) {
 
         UserMessageEntity userMessageEntity = new UserMessageEntity();
-        UserEntity user = m_userRepository.findById(send.getUserId()).orElse(null);
+        UserEntity sender = m_userRepository.findById(send.getSenderId()).orElse(null);
+
+        UserEntity receiver = m_userRepository.findById(send.getReceiverId()).orElse(null);
 
         userMessageEntity.setId(UUID.randomUUID());
         userMessageEntity.setMessage(send.getMessage());
-        userMessageEntity.setUser(user);
+        userMessageEntity.setSender(sender);
+        userMessageEntity.setReceiverId(send.getReceiverId());
 
         m_userMessageRepository.save(userMessageEntity);
-
-        return Optional.of(ReceiveMessageQuery.builder().sender(user.getFullName()).message(send.getMessage()).build());
     }
 
     @Override
@@ -45,7 +46,15 @@ public class SendMessageServiceImpl implements SendMessageService{
         return m_userMessageRepository.findAll().stream().map(userMessage -> {
             Optional<ReceiveMessageQuery> receiveMessageQuery = Optional.of(new ReceiveMessageQuery());
             receiveMessageQuery.ifPresent(receive -> {
-                receive.setSender(userMessage.getUser().getFullName());
+
+                UserEntity receiver = m_userRepository.findById(userMessage.getReceiverId()).orElse(null);
+
+                String receiverName = (receiver != null) ? receiver.getFullName() : null;
+
+                receive.setSenderId(userMessage.getSender().getId());
+                receive.setSenderName(userMessage.getSender().getFullName());
+                receive.setReceiverId(userMessage.getReceiverId());
+                receive.setReceiverName(receiverName);
                 receive.setMessage(userMessage.getMessage());
             });
             return receiveMessageQuery;

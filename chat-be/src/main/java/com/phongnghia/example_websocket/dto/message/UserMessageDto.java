@@ -18,6 +18,8 @@ public class UserMessageDto {
 
     private String message;
 
-    private UserEntity user;
+    private UUID receiverId;
+
+    private UserEntity sender;
 
 }

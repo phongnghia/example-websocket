@@ -13,7 +13,9 @@ import java.util.UUID;
 @Builder
 public class SendQueryRequest {
 
-    private UUID userId;
+    private UUID senderId;
+
+    private UUID receiverId;
 
     private String message;
 

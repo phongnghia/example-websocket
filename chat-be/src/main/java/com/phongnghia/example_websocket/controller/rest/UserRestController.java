@@ -8,7 +8,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -31,10 +30,6 @@ public class UserRestController {
         if (userDto.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ResponseDto.builder().isSuccess(false).build());
         }
-
-        List<Optional<UserDto>> users = m_userService.findAll();
-
-        m_userService.sendMessageToSubscriberUser(id, users);
 
         return ResponseEntity.status(HttpStatus.OK).body(ResponseDto.builder().isSuccess(true).data(userDto).build());
     }

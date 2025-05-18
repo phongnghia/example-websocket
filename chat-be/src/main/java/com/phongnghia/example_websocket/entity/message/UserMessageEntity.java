@@ -22,8 +22,10 @@ public class UserMessageEntity {
 
     private String message;
 
+    private UUID receiverId;
+
     @ManyToOne
-    @JoinColumn(name = "userId")
-    private UserEntity user;
+    @JoinColumn(name = "sender")
+    private UserEntity sender;
 
 }

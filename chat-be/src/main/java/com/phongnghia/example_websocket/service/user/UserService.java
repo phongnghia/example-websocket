@@ -12,6 +12,4 @@ public interface UserService {
     Optional<UserDto> findUserById(UUID id);
 
     List<Optional<UserDto>> findAll();
-
-    void sendMessageToSubscriberUser(UUID id, Object message);
 }

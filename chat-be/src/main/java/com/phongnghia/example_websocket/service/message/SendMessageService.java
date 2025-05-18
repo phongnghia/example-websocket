@@ -8,7 +8,7 @@ import java.util.Optional;
 
 public interface SendMessageService {
 
-    Optional<ReceiveMessageQuery> sendMessage(SendQueryRequest send);
+    void sendMessage(SendQueryRequest send);
 
     List<Optional<ReceiveMessageQuery>> findMessages();
 
