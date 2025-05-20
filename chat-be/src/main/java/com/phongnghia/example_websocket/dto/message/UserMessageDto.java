@@ -1,6 +1,6 @@
 package com.phongnghia.example_websocket.dto.message;
 
-import com.phongnghia.example_websocket.entity.user.UserEntity;
+import com.phongnghia.example_websocket.dto.user.UserDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -20,6 +20,6 @@ public class UserMessageDto {
 
     private UUID receiverId;
 
-    private UserEntity sender;
+    private UserDto sender;
 
 }
