@@ -43,10 +43,10 @@ function loadMainPage(){
             displayUserResponse(users);
         });
 
-        stompClient.subscribe(`/queue/private/${currentUser.id}`, function(response){
-            let checkStatus = JSON.parse(response.body);
-            console.log(checkStatus);
-        });
+        // stompClient.subscribe(`/queue/private/${currentUser.id}`, function(response){
+        //     let checkStatus = JSON.parse(response.body);
+        //     console.log(checkStatus);
+        // });
 
         currentUserAvatar.textContent = avatarUser(currentUser.fullName);
         currentUserName.textContent = currentUser.fullName;

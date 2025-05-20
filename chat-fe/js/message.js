@@ -3,13 +3,35 @@ import { currentUser } from "./user.js";
 
 let currentChatUser;
 
-export function selectChatUser(receiver){
+stompClient.connect({}, function (frame) {
+    if (currentChatUser && currentChatUser.id) {
+        loadChatBox(currentUser.id, currentChatUser.id);
+    }
+});
+
+function loadChatBox(senderId, receiverId){
+    stompClient.subscribe(`/queue/private/history/${receiverId}/sendFrom/${senderId}`, function (response) {
+        let message = JSON.parse(response.body);
+        console.log(message);
+    });
+}
+
+export function selectChatUser(receiver) {
     const senderId = currentUser.id;
     const receiverId = receiver.id;
 
+    loadChatBox(senderId, receiverId);
+
+    const selectHistory = {
+        senderId: senderId,
+        receiverId: receiverId
+    }
+
     chatPartnerAvatar.textContent = avatarUser(receiver.fullName);
     chatPartnerName.textContent = receiver.fullName;
-    document.querySelector('.chat-header-status').textContent = "@"+receiver.username;
+    document.querySelector('.chat-header-status').textContent = "@" + receiver.username;
+
+    stompClient.send("/app/private_message.select", {}, JSON.stringify(selectHistory));
 
     messageInput.disabled = false;
     sendButton.disabled = false;
@@ -56,10 +78,10 @@ function renderMessage(message) {
     const isCurrentUser = message.senderId === currentUser.id;
     const senderName = isCurrentUser ? 'You' : currentChatUser.fullName;
     const timestamp = new Date(message.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-    
+
     const messageElement = document.createElement('div');
     messageElement.className = `message ${isCurrentUser ? 'sent' : 'received'}`;
-    
+
     messageElement.innerHTML = `
         <div class="message-info">
             <div class="message-sender">${senderName}</div>
@@ -67,7 +89,7 @@ function renderMessage(message) {
         </div>
         <div class="message-bubble">${message.content}</div>
     `;
-    
+
     chatMessages.appendChild(messageElement);
 }
 
@@ -122,7 +144,7 @@ function handleMessageUpdate(data) {
     }
 }
 
-messageInput.addEventListener('input', function() {
+messageInput.addEventListener('input', function () {
     this.style.height = 'auto';
     this.style.height = (this.scrollHeight) + 'px';
 });
