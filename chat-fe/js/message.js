@@ -1,7 +1,11 @@
 import { apiURL, stompClient, avatarUser } from "./global.js";
 import { currentUser } from "./user.js";
 
-let currentChatUser;
+export let currentChatUser = {};
+let chatSubscription = null;
+const messageInput = document.getElementById('messageInput');
+const sendButton = document.getElementById('sendButton');
+const chatMessages = document.getElementById('chatMessages');
 
 stompClient.connect({}, function (frame) {
     if (currentChatUser && currentChatUser.id) {
@@ -9,16 +13,21 @@ stompClient.connect({}, function (frame) {
     }
 });
 
-function loadChatBox(senderId, receiverId){
-    stompClient.subscribe(`/queue/private/history/${receiverId}/sendFrom/${senderId}`, function (response) {
-        let message = JSON.parse(response.body);
-        console.log(message);
+function loadChatBox(senderId, receiverId) {
+    if (chatSubscription) {
+        chatSubscription.unsubscribe();
+    }
+    chatSubscription = stompClient.subscribe(`/queue/private/history/${receiverId}/sendFrom/${senderId}`, function (response) {
+        let messages = JSON.parse(response.body);
+        loadChatHistory(receiverId, messages);
     });
 }
 
 export function selectChatUser(receiver) {
     const senderId = currentUser.id;
     const receiverId = receiver.id;
+    currentChatUser.id = receiver.id;
+    currentChatUser.fullName = receiver.fullName;
 
     loadChatBox(senderId, receiverId);
 
@@ -36,48 +45,53 @@ export function selectChatUser(receiver) {
     messageInput.disabled = false;
     sendButton.disabled = false;
     messageInput.placeholder = 'Type your message here...';
-
-    loadChatHistory(receiver.id);
 }
 
-function loadChatHistory(userId) {
+function loadChatHistory(userId, messages) {
+    chatMessages.textContent = '';
+    
+    if (!userId || !messages || !Array.isArray(messages) || messages.length == 0) {
+        const notFoundElement = document.createElement('div');
+        notFoundElement.innerHTML = `
+            <div class="welcome-message" id="welcomeMessage">
+                <p>Message not sent yet!</p>
+            </div>
+        `;
+        chatMessages.appendChild(notFoundElement);
+        return;
+    }
 
-    chatMessages.innerHTML = '';
+    const historyMessages = messages.map(message => ({
+        receiverId: message.receiverId,
+        senderId: message.sender.id,
+        content: message.message || message.content,
+        timestamp: message.timestamp
+    }));
+
+    historyMessages.sort((x, y) => {
+        return (new Date(x.timestamp)) - (new Date(y.timestamp));
+    });
+
+    const fragment = document.createDocumentFragment();
+    
+    historyMessages.forEach(message => {
+        const messageElement = renderMessage(message);
+        if (messageElement) {
+            fragment.appendChild(messageElement);
+        }
+    });
+    
+    chatMessages.appendChild(fragment);
 
     setTimeout(() => {
-        const messages = [
-            {
-                id: 'msg-1',
-                senderId: userId,
-                content: 'Hello there!',
-                timestamp: new Date(Date.now() - 3600000).toISOString()
-            },
-            {
-                id: 'msg-2',
-                senderId: currentUser.id,
-                content: 'Hi! How are you?',
-                timestamp: new Date(Date.now() - 1800000).toISOString()
-            },
-            {
-                id: 'msg-3',
-                senderId: userId,
-                content: 'I\'m doing well, thanks for asking!',
-                timestamp: new Date().toISOString()
-            }
-        ];
-
-        messages.forEach(message => {
-            renderMessage(message);
-        });
-
         chatMessages.scrollTop = chatMessages.scrollHeight;
-    }, 300);
+    }, 0);
 }
 
 function renderMessage(message) {
     const isCurrentUser = message.senderId === currentUser.id;
     const senderName = isCurrentUser ? 'You' : currentChatUser.fullName;
-    const timestamp = new Date(message.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    const timestamp = formatTimestamp(message.timestamp);
 
     const messageElement = document.createElement('div');
     messageElement.className = `message ${isCurrentUser ? 'sent' : 'received'}`;
@@ -93,27 +107,24 @@ function renderMessage(message) {
     chatMessages.appendChild(messageElement);
 }
 
-function sendMessage() {
+sendButton.addEventListener('click', () => {
     const content = messageInput.value.trim();
     if (!content || !currentChatUser) return;
 
-    const message = {
+    const sendMessage = {
         senderId: currentUser.id,
         receiverId: currentChatUser.id,
-        content: content,
-        timestamp: new Date().toISOString()
-    };
-
-    if (stompClient) {
-        stompClient.send("/app/message.send", {}, JSON.stringify(message));
+        message: content
     }
 
-    renderMessage(message);
+    stompClient.send("/app/private_message.send", {}, JSON.stringify(sendMessage));
+
+    renderMessage(sendMessage);
 
     messageInput.value = '';
 
     chatMessages.scrollTop = chatMessages.scrollHeight;
-}
+});
 
 function handleUserUpdate(data) {
     if (Array.isArray(data)) {
@@ -142,6 +153,11 @@ function handleMessageUpdate(data) {
             chatMessages.scrollTop = chatMessages.scrollHeight;
         }
     }
+}
+
+function formatTimestamp(timestamp) {
+    const date = new Date(timestamp);
+    return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 }
 
 messageInput.addEventListener('input', function () {

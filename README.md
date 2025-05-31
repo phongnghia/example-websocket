@@ -46,6 +46,11 @@ id:sub-1
 
 ```
 
-# System context diagram
+# System design 
+### (Example design - in the simplest way)
 
 ![img.png](img/img.png)
+
+
+> [!NOTE]
+> Update system design (Workflow, ...) - Later

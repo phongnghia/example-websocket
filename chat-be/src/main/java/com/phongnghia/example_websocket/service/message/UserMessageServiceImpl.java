@@ -10,6 +10,7 @@ import com.phongnghia.example_websocket.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -37,9 +38,13 @@ public class UserMessageServiceImpl implements UserMessageService{
         List<UserMessageDto> list = m_userMessageRepository
                 .findAll()
                 .stream()
-                .filter(userMessageEntity ->
-                        ((userMessageEntity.getReceiverId() == receiverId)
-                        && (userMessageEntity.getSender().getId() == senderId)))
+                .filter(userMessageEntity -> (
+                        ((userMessageEntity.getReceiverId().equals(receiverId))
+                                && (userMessageEntity.getSender().getId().equals(senderId))) ||
+                                ((userMessageEntity.getSender().getId().equals(receiverId))
+                                        && userMessageEntity.getReceiverId().equals(senderId)))
+
+                        )
                 .map(m_webSocketConverter::entityToDto)
                 .collect(Collectors.toList());
         return list;
@@ -48,13 +53,14 @@ public class UserMessageServiceImpl implements UserMessageService{
     @Override
     public void sendPrivateMessage(SendQueryRequest sendQueryRequest) {
         UserEntity sender = m_userRepository.findById(sendQueryRequest.getSenderId()).orElse(null);
-        m_userMessageRepository.save(
-                UserMessageEntity
-                        .builder()
-                        .message(sendQueryRequest.getMessage())
-                        .receiverId(sendQueryRequest.getReceiverId())
-                        .sender(sender)
-                        .build()
-        );
+        UserMessageEntity userMessage = UserMessageEntity
+                .builder()
+                .id(UUID.randomUUID())
+                .message(sendQueryRequest.getMessage())
+                .receiverId(sendQueryRequest.getReceiverId())
+                .timestamp(LocalDateTime.now())
+                .sender(sender)
+                .build();
+        m_userMessageRepository.save(userMessage);
     }
 }

@@ -8,6 +8,8 @@ import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -31,20 +33,28 @@ public class UserMessageController {
 
     @MessageMapping("/private_message.send")
     public void sendPrivateMessage(SendQueryRequest sendQueryRequest) {
+        if (sendQueryRequest.getMessage() != null) {
+            m_userMessageService.sendPrivateMessage(sendQueryRequest);
+        }
 
-        m_userMessageService.sendPrivateMessage(sendQueryRequest);
-
-        String dest = String.format(
+        String destToSender = String.format(
                 "%s/%s/%s/sendFrom/%s",
                 DESTINATION,
                 HISTORY,
                 sendQueryRequest.getReceiverId().toString(),
                 sendQueryRequest.getSenderId().toString()
         );
-        m_simpMessageTemplate.convertAndSend(
-                dest,
-                historyOfChat(sendQueryRequest.getSenderId(), sendQueryRequest.getReceiverId())
+
+        String destToReceiver = String.format(
+                "%s/%s/%s/sendFrom/%s",
+                DESTINATION,
+                HISTORY,
+                sendQueryRequest.getSenderId().toString(),
+                sendQueryRequest.getReceiverId().toString()
         );
+
+        sendPrivateMessageToTopic(destToSender, historyOfChat(sendQueryRequest.getSenderId(), sendQueryRequest.getReceiverId()));
+        sendPrivateMessageToTopic(destToReceiver, historyOfChat(sendQueryRequest.getSenderId(), sendQueryRequest.getReceiverId()));
     }
 
     @MessageMapping("/private_message.select")
@@ -56,15 +66,18 @@ public class UserMessageController {
                 select.getReceiverId().toString(),
                 select.getSenderId().toString()
         );
-
-        m_simpMessageTemplate.convertAndSend(
-                dest,
-                historyOfChat(select.getReceiverId(), select.getSenderId())
-        );
+        sendPrivateMessageToTopic(dest, historyOfChat(select.getSenderId(), select.getReceiverId()));
     }
 
     private List<UserMessageDto> historyOfChat(UUID senderId, UUID receiverId) {
         return m_userMessageService.getHistoryOfChat(senderId, receiverId);
+    }
+
+    private void sendPrivateMessageToTopic(String destination, Object payload) {
+        m_simpMessageTemplate.convertAndSend(
+                destination,
+                payload
+        );
     }
 
 }
