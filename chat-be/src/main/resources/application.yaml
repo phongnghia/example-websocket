@@ -6,9 +6,9 @@ spring:
   application:
     name: "example-websocket"
   datasource:
-    url: "jdbc:mysql://localhost:3306/example-websocket?createDatabaseIfNotExist=true"
-    username: "@db_username@"
-    password: "@db_password@"
+    url: "jdbc:mysql://${DB_URL:localhost}:${DB_PORT:3306}/example-websocket?createDatabaseIfNotExist=true"
+    username: "${DB_USERNAME}"
+    password: "${DB_PASSWORD}"
     driver-class-name: "com.mysql.cj.jdbc.Driver"
   jpa:
     generate-ddl: true

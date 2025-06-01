@@ -1,7 +1,7 @@
 // Connect websocket
 console.log("Connecting to websocket ...")
-export const socket = new SockJS('http://localhost:8082/example-websocket');
-export const apiURL = "http://localhost:8082/rest"
+export const socket = new SockJS('http://phongnghia.io.vn/example-websocket');
+export const apiURL = "http://phongnghia.io.vn/rest"
 export const stompClient = Stomp.over(socket);
 
 export function generateSessionId() {

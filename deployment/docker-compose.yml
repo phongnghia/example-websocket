@@ -1,0 +1,52 @@
+version: '3.9'
+
+services:
+  database:
+    image: mysql:9.3
+    container_name: database
+    ports:
+      - "3306:3306"
+    volumes:
+      - /root/deploy/mysql/storage:/var/lib/mysql
+    env_file:
+      - .env-prod
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 5s
+      timeout: 30s
+      retries: 10
+    deploy:
+      resources:
+        limits:
+          memory: "2G"
+          cpus: 0.8
+  backend:
+    image: phongnghia/example-websocket:0.1
+    container_name: backend
+    ports:
+      - "8088:8082"
+    env_file:
+      - .env-prod
+    deploy:
+      resources:
+        limits:
+          memory: "5G"
+          cpus: 1
+    depends_on:
+      database:
+        condition: service_healthy
+  front-end:
+    image: nginx:1.28.0-perl
+    container_name: front-end
+    ports:
+      - "80:80"
+    volumes:
+      - /root/deploy/front-end:/usr/share/nginx/html:ro
+    env_file:
+      - .env-prod
+    deploy:
+      resources:
+        limits:
+          memory: 5G
+    depends_on:
+      - backend
