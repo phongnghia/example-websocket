@@ -31,7 +31,7 @@ stompClient.connect({}, function (frame) {
     loadMainPage();
 });
 
-function loadMainPage(){
+function loadMainPage() {
     let getLocalStorageItem = JSON.parse(localStorage.getItem("user"));
 
     if (getLocalStorageItem && getLocalStorageItem != null) currentUser = getLocalStorageItem;
@@ -66,7 +66,7 @@ function findAllUsers() {
     return 0;
 }
 
-function subscribePrivateMessage(id){
+function subscribePrivateMessage(id) {
     stompClient.send("/app/user.subscribe", {}, JSON.stringify(id));
 }
 
@@ -74,22 +74,21 @@ function findUserById(id) {
     fetch(apiURL + "/find/" + id, {
         method: 'GET'
     })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
+        .then(response => response.json())
+        .then(data => {
+            if (!data.success) {
+                showError("Oops! We couldn't find and account with that UUID!");
+                accessTab.click();
+            }
             currentUser = data.data;
             localStorage.setItem("user", JSON.stringify(currentUser));
             loadMainPage();
-        } else {
-            showError("Oops! We couldn't find and account with that UUID!");
+        })
+        .catch(error => {
+            showError("Oops! Something went wrong on our end!");
+            // console.error(error);
             accessTab.click();
-        }
-    })
-    .catch(error => {
-        showError("Oops! Something went wrong on our end!");
-        // console.error(error);
-        accessTab.click();
-    })
+        })
 }
 
 function createNewUser(newUser) {
@@ -100,18 +99,22 @@ function createNewUser(newUser) {
         },
         body: JSON.stringify(newUser)
     })
-    .then(response => response.json())
-    .then(data => {
-        newUserId = data.data.id;
-        document.getElementById('accessUserId').value = newUserId;
-        showSuccess("Registration successful!. \nYour ID should be remembered");
-        accessTab.click();
-    })
-    .catch(error => {
-        showError(error);
-        // console.error(error);
-        createTab.click();
-    })
+        .then(response => response.json())
+        .then(data => {
+            if (!data.success) {
+                showError("The username is already in use. Please try another.");
+                return;
+            }
+            newUserId = data.data.id;
+            document.getElementById('accessUserId').value = newUserId;
+            showSuccess("Registration successful!. \nYour ID should be remembered");
+            accessTab.click();
+        })
+        .catch(error => {
+            showError(error);
+            // console.error(error);
+            createTab.click();
+        })
 }
 
 // ========== //

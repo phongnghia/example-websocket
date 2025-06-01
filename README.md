@@ -49,7 +49,11 @@ id:sub-1
 # System design 
 ### (Example design - in the simplest way)
 
-![img.png](img/img.png)
+![Design](img/img.png)
+
+![UI](img/main-ui.png)
+
+![Login](img/access-ui.png)
 
 
 > [!NOTE]

@@ -73,8 +73,19 @@ function loadChatHistory(userId, messages) {
     });
 
     const fragment = document.createDocumentFragment();
+
+    let dateTimeHeader = null;
     
     historyMessages.forEach(message => {
+        const messageTimestamp = formatDateHeader(message.timestamp);
+        if (messageTimestamp != dateTimeHeader) {
+            dateTimeHeader = messageTimestamp;
+            const dateHeader = document.createElement('div');
+            dateHeader.innerHTML = `
+                <div class="message-time-header">${dateTimeHeader}</div>
+            `
+            chatMessages.appendChild(dateHeader);
+        }
         const messageElement = renderMessage(message);
         if (messageElement) {
             fragment.appendChild(messageElement);
@@ -92,6 +103,7 @@ function renderMessage(message) {
     const isCurrentUser = message.senderId === currentUser.id;
     const senderName = isCurrentUser ? 'You' : currentChatUser.fullName;
     const timestamp = formatTimestamp(message.timestamp);
+    const dataHeader = formatDateHeader(message.timestamp);
 
     const messageElement = document.createElement('div');
     messageElement.className = `message ${isCurrentUser ? 'sent' : 'received'}`;
@@ -126,38 +138,26 @@ sendButton.addEventListener('click', () => {
     chatMessages.scrollTop = chatMessages.scrollHeight;
 });
 
-function handleUserUpdate(data) {
-    if (Array.isArray(data)) {
-        users = data.filter(user => user.id !== currentUser.id);
-        renderUserList();
-    } else {
-        const index = users.findIndex(user => user.id === data.id);
-        if (index >= 0) {
-            users[index] = data;
-        } else if (data.id !== currentUser.id) {
-            users.push(data);
-        }
-        renderUserList();
-    }
-}
-
-function handleMessageUpdate(data) {
-    if (Array.isArray(data)) {
-        chatMessages.innerHTML = '';
-        data.forEach(message => {
-            renderMessage(message);
-        });
-    } else {
-        if (data.senderId === currentChatUser?.id || data.receiverId === currentUser.id) {
-            renderMessage(data);
-            chatMessages.scrollTop = chatMessages.scrollHeight;
-        }
-    }
-}
-
 function formatTimestamp(timestamp) {
     const date = new Date(timestamp);
     return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+}
+
+function formatDateHeader(timestamp) {
+    const today = new Date();
+    const date = new Date(timestamp);
+    
+    if (date.toDateString() === today.toDateString()) {
+        return 'Today';
+    }
+    
+    const yesterday = new Date(today);
+    yesterday.setDate(yesterday.getDate() - 1);
+    if (date.toDateString() === yesterday.toDateString()) {
+        return 'Yesterday';
+    }
+    
+    return date.toLocaleDateString([], { year: 'numeric', month: 'long', day: 'numeric' });
 }
 
 messageInput.addEventListener('input', function () {
