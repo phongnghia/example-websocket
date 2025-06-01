@@ -11,3 +11,5 @@ export function generateSessionId() {
 export function avatarUser(str){
     return str.split(" ").map(word => word[0]).join("").slice(0,2);
 }
+
+stompClient.debug = function(){};
