@@ -169,7 +169,7 @@
 						<configuration>
 							<target>
 								<copy file="target/example-websocket-${version}.war"
-									  tofile="../deployment/backend/target/example-websocket.war"/>
+									  tofile="../deploy/backend/target/example-websocket.war"/>
 							</target>
 						</configuration>
 					</execution>
