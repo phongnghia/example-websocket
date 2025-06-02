@@ -1,3 +1,0 @@
-# DEPLOYMENT WEBSOCKET APPLICATION
-
-## Dummy readme

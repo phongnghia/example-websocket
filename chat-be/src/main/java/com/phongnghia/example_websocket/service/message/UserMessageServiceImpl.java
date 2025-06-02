@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -53,12 +54,15 @@ public class UserMessageServiceImpl implements UserMessageService{
     @Override
     public void sendPrivateMessage(SendQueryRequest sendQueryRequest) {
         UserEntity sender = m_userRepository.findById(sendQueryRequest.getSenderId()).orElse(null);
+
+        ZoneId vietnameZone = ZoneId.of("Asia/Ho_Chi_Minh");
+
         UserMessageEntity userMessage = UserMessageEntity
                 .builder()
                 .id(UUID.randomUUID())
                 .message(sendQueryRequest.getMessage())
                 .receiverId(sendQueryRequest.getReceiverId())
-                .timestamp(LocalDateTime.now())
+                .timestamp(LocalDateTime.now(vietnameZone))
                 .sender(sender)
                 .build();
         m_userMessageRepository.save(userMessage);
