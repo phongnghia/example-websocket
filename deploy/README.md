@@ -1,8 +1,9 @@
 # DEPLOYMENT WEBSOCKET APPLICATION
 
-## Deploy local
+# Deploy local
 
 ### Build Backend
+
 ```code
 
 docker build -t phongnghia/example-websocket:0.1 .
@@ -31,15 +32,16 @@ docker compose up -d
 
 ```
 
-## Generate SSL certificates in ZeroSSL
 
-### Use 'File upload' -> Download Auth File -> Upload to the server under the /.well-known/pki-validation/ directory (in ZeroSSL)
+# Generate SSL certificates in ZeroSSL
 
-### Download certificates -> Extract -> Load files to the /etc/ssl directory (Cert pem to /etc/ssl/certs and Key pem to /etc/ssl/private)
+* Use `File upload` -> Download Auth File -> Upload to the server under the `/.well-known/pki-validation/` directory (in `ZeroSSL`)
 
-### Upload to certs directory (The mount volume to the container)
+* Download certificates -> Extract -> Load files to the /etc/ssl directory (Cert pem to `/etc/ssl/certs` and Key pem to `/etc/ssl/private`)
 
-### Change permission for the private key
+* Upload to certs directory (The mount volume to the container)
+
+* Change permission for the private key
 
 ``` code
 
