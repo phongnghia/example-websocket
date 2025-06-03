@@ -12,4 +12,6 @@ public interface UserService {
     Optional<UserDto> findUserById(UUID id);
 
     List<Optional<UserDto>> findAll();
+
+    Optional<UserDto> findUserByCode(String userCode, boolean isLogin);
 }

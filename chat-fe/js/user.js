@@ -3,7 +3,7 @@ import { selectChatUser } from './message.js';
 
 let users = [];
 let data = [];
-let newUserId = null;
+let newUserCode = null;
 
 // ========== //
 
@@ -70,14 +70,14 @@ function subscribePrivateMessage(id) {
     stompClient.send("/app/user.subscribe", {}, JSON.stringify(id));
 }
 
-function findUserById(id) {
-    fetch(apiURL + "/find/" + id, {
+function findUserById(userCode) {
+    fetch(apiURL + "/login/" + userCode, {
         method: 'GET'
     })
         .then(response => response.json())
         .then(data => {
             if (!data.success) {
-                showError("Oops! We couldn't find and account with that UUID!");
+                showError("Oops! We couldn't find and account with that user code!");
                 accessTab.click();
             }
             currentUser = data.data;
@@ -105,9 +105,9 @@ function createNewUser(newUser) {
                 showError("The username is already in use. Please try another.");
                 return;
             }
-            newUserId = data.data.id;
-            document.getElementById('accessUserId').value = newUserId;
-            showSuccess("Registration successful!. \nYour ID should be remembered");
+            newUserCode = data.data.userCode;
+            document.getElementById('accessUserId').value = newUserCode;
+            showSuccess("Registration successful!. \nYour code should be remembered");
             accessTab.click();
         })
         .catch(error => {
@@ -124,12 +124,12 @@ accessBtn.addEventListener('click', () => {
     const userId = document.getElementById('accessUserId').value;
 
     if (!userId) {
-        showError("UserId is required");
+        showError("User code is required");
         return 1;
     }
 
     if (!isValidUUID(userId)) {
-        showError("UserId is not valid. It must be a UUID string");
+        showError("Invalid user code. The code must start with 'CAP_' and be exactly 8 characters long (e.g., 'CAP_1234')");
         return 1;
     }
 

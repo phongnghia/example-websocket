@@ -34,6 +34,17 @@ public class UserRestController {
         return ResponseEntity.status(HttpStatus.OK).body(ResponseDto.builder().isSuccess(true).data(userDto).build());
     }
 
+    @GetMapping("/login/{userCode}")
+    public ResponseEntity<?> login(@PathVariable String userCode) {
+        Optional<UserDto> userDto = m_userService.findUserByCode(userCode, true);
+
+        if (userDto.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ResponseDto.builder().isSuccess(false).build());
+        }
+
+        return ResponseEntity.status(HttpStatus.OK).body(ResponseDto.builder().isSuccess(true).data(userDto).build());
+    }
+
     @PostMapping("/add")
     public ResponseEntity<?> addUser(@RequestBody UserDto userDto) {
         try {

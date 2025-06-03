@@ -11,7 +11,7 @@ server:
 
 version: "@project.version@"
 
-domain-name: "${DOMAIN_NAME}"
+domain-name: "${DOMAIN_NAME:localhost}"
 
 spring:
   application:
@@ -32,6 +32,18 @@ spring:
 #    ssl:
 #      enabled: true
 #      certificate-authorities: classpath:http_ca.crt
+  flyway:
+    enabled: true
+    url: "jdbc:mysql://${DB_URL:localhost}:${DB_PORT:3306}/example-websocket?createDatabaseIfNotExist=true"
+    user: "${DB_USERNAME}"
+    password: "${DB_PASSWORD}"
+    driver-class-name: "com.mysql.cj.jdbc.Driver"
+    locations:
+      - classpath:db/migration
+    baseline-on-migrate: true
+  batch:
+    jdbc:
+      initialize-schema: ALWAYS
 
 logging:
   level:
