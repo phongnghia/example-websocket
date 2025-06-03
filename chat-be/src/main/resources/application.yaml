@@ -8,7 +8,10 @@ server:
 #    key-store-type: PKCS12
 #    key-store-password: "${KEYSTORE_PASSWORD}"
     key-alias: example-websocket
-version: "1.0.0-SNAPSHOT"
+
+version: "@project.version@"
+
+domain-name: "${DOMAIN_NAME}"
 
 spring:
   application:
