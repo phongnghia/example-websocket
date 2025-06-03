@@ -34,5 +34,6 @@ build/
 
 certs
 *keystore.p12
-*phongnghia.pem
+*.pem
 *.key
+*.crt
