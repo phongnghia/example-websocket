@@ -21,7 +21,7 @@ services:
           memory: "2G"
           cpus: 0.8
   backend:
-    image: phongnghia/example-websocket:0.4
+    image: phongnghia/example-websocket:0.5
     container_name: backend
     ports:
       - "8443:8443"

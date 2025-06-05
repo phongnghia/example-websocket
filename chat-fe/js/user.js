@@ -102,6 +102,10 @@ function createNewUser(newUser) {
         .then(response => response.json())
         .then(data => {
             if (!data.success) {
+                if (data.message != null) {
+                    showError(data.message);
+                    return;
+                }
                 showError("The username is already in use. Please try another.");
                 return;
             }
@@ -139,6 +143,7 @@ accessBtn.addEventListener('click', () => {
 // Create function
 createBtn.addEventListener('click', () => {
     const username = document.getElementById('createUsername').value;
+    const email = document.getElementById('createEmail').value;
     const fullName = document.getElementById('createFullName').value;
     const description = document.getElementById('createDescription').value;
 
@@ -150,8 +155,21 @@ createBtn.addEventListener('click', () => {
         return 1;
     }
 
+    if (!email) {
+        showError("Email is required");
+        createTab.click();
+        return 1;
+    }
+
+    if (!validateEmail(email)) {
+        showError("Email is invalid");
+        createTab.click();
+        return 1;
+    }
+
     var newUser = {
         username: username,
+        email: email,
         fullName: fullName,
         description: description
     }

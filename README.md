@@ -55,6 +55,8 @@ id:sub-1
 
 ![Login](img/access-ui.png)
 
+![Create and Access to Chat application](img/Create-and-Access.png)
+
 
 > [!NOTE]
 > Update system design (Workflow, ...) - Later

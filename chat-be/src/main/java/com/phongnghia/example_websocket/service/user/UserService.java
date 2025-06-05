@@ -14,4 +14,6 @@ public interface UserService {
     List<Optional<UserDto>> findAll();
 
     Optional<UserDto> findUserByCode(String userCode, boolean isLogin);
+
+    boolean isEmailExists(String email);
 }

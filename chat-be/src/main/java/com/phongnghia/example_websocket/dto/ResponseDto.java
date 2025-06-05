@@ -13,4 +13,6 @@ public class ResponseDto<T> {
     private boolean isSuccess;
 
     private T data;
+
+    private T message;
 }

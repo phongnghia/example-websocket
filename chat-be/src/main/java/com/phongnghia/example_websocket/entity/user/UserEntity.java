@@ -29,6 +29,9 @@ public class UserEntity {
     @Column(unique = true, nullable = false)
     private String userCode;
 
+    @Column(unique = true, nullable = false)
+    private String email;
+
     private String fullName;
 
     private String description;

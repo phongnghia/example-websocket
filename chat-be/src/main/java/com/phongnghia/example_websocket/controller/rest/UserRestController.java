@@ -48,11 +48,23 @@ public class UserRestController {
     @PostMapping("/add")
     public ResponseEntity<?> addUser(@RequestBody UserDto userDto) {
         try {
+
+            if (m_userService.isEmailExists(userDto.getEmail())) {
+                return ResponseEntity
+                        .status(HttpStatus.BAD_REQUEST)
+                        .body(
+                                ResponseDto.builder().isSuccess(false).message("This email is already in use. Please try another").build()
+                        );
+            }
+
             return m_userService.addUser(userDto)
                     .map(
                             user -> ResponseEntity.status(HttpStatus.OK)
                                     .body(ResponseDto.builder().isSuccess(true).data(user).build()))
-                    .orElse(ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponseDto.builder().isSuccess(false).build()));
+                    .orElse(
+                            ResponseEntity
+                                    .status(HttpStatus.BAD_REQUEST)
+                                    .body(ResponseDto.builder().isSuccess(false).build()));
         } catch (Exception ex) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ResponseDto.builder().isSuccess(false).build());
         }
