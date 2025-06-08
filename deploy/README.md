@@ -26,6 +26,14 @@ docker build -t <registry>/example-websocket:0.1 .
 
 ```
 
+### Build Frontend
+
+```code
+
+docker build -t <registry>/example-websocket-frontend:0.1 .
+
+```
+
 ### Create deploy, certs, front-end (nginx), backend directories
 
 ``` code
