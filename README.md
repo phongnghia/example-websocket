@@ -49,7 +49,7 @@ id:sub-1
 # System design 
 ### (Example design - in the simplest way)
 
-### Link to the Chat application - https://phongnghia.io.vn/
+* Link to the Chat application - [Official Chat Application](https://phongnghia.io.vn)
 
 ![Design](img/img.png)
  
