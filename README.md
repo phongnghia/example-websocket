@@ -50,12 +50,16 @@ id:sub-1
 ### (Example design - in the simplest way)
 
 ![Design](img/img.png)
+ 
+![Technology design system](img/technologies.png)
 
 ![UI](img/main-ui.png)
 
 ![Login](img/access-ui.png)
 
 ![Create and Access to Chat application](img/Create-and-Access.png)
+
+![Notification](img/notification.png)
 
 
 > [!NOTE]

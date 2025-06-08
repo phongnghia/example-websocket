@@ -247,6 +247,11 @@ body {
     padding: 5px 0 0px 0;
 }
 
+.user-name-us {
+    font-size: x-small;
+    padding: 5px 0 0px 0;
+}
+
 /* Chat Area */
 .chat-area {
     flex: 1;

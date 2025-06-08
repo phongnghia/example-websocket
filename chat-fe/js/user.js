@@ -24,6 +24,7 @@ const logoutBtn = document.getElementById('userLogout');
 const userList = document.getElementById('userList');
 const currentUserAvatar = document.getElementById('currentUserAvatar');
 const currentUserName = document.getElementById('currentUserName');
+const currentUserName_us = document.getElementById('currentUserName_us');
 const currentUserId = document.getElementById('currentUserId');
 
 // WebSocket connection
@@ -49,6 +50,7 @@ function loadMainPage() {
 
         currentUserAvatar.textContent = avatarUser(currentUser.fullName);
         currentUserName.textContent = currentUser.fullName;
+        currentUserName_us.textContent = `@${currentUser.username}`;
         currentUserId.textContent = currentUser.id;
 
         authContainer.classList.add('hidden');
