@@ -157,7 +157,7 @@
 				<configuration>
 					<filesets>
 						<fileset>
-							<directory>../deployment/backend/target</directory>
+							<directory>../deploy/backend/target</directory>
 							<includes>
 								<include>**/*</include>
 							</includes>

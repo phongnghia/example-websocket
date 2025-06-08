@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>com.phongnghia</groupId>
+	<artifactId>example-websocket</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<name>example-websocket-frontend</name>
+    <packaging>pom</packaging>
+	<description>Example app using websocket</description>
+
+	<build>
+		<plugins>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-clean-plugin</artifactId>
+				<version>3.4.1</version>
+				<configuration>
+					<filesets>
+						<fileset>
+							<directory>../deploy/frontend/target</directory>
+							<includes>
+								<include>**/*</include>
+							</includes>
+						</fileset>
+					</filesets>
+				</configuration>
+			</plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>filter</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>resources</goal>
+                        </goals>
+                    </execution>
+                </executions>
+
+                <configuration>
+                    <outputDirectory>../deploy/frontend/target</outputDirectory>
+                    <resources>
+                        <resource>
+                            <directory>.</directory>
+                            <filtering>true</filtering>
+                            <includes>
+                                <include>**</include>
+                            </includes>
+                            <excludes>
+                                <exclude>chat.html</exclude>
+                                <exclude>index.html</exclude>
+                                <exclude>pom.xml</exclude>
+                            </excludes>
+                        </resource>
+                    </resources>
+                </configuration>
+            </plugin>
+
+		</plugins>
+	</build>
+
+</project>
