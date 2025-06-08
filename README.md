@@ -49,6 +49,8 @@ id:sub-1
 # System design 
 ### (Example design - in the simplest way)
 
+### Link to the Chat application - https://phongnghia.io.vn/
+
 ![Design](img/img.png)
  
 ![Technology design system](img/technologies.png)
