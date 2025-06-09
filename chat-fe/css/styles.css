@@ -181,6 +181,18 @@ body {
     color: var(--light);
 }
 
+.user-item-notification {
+    font-size: 0.75rem;
+    background: red;
+    width: 6%;
+    color: white;
+    height: 20px;
+    border-radius: 50%;
+    text-align: center;
+    align-items: center;
+    place-content: center;
+}
+
 .search-box {
     padding: 1rem;
     border-bottom: 1px solid var(--light-gray);

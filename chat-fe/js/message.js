@@ -13,12 +13,29 @@ stompClient.connect({}, function (frame) {
     }
 });
 
+function readMessage(obj) {
+    const parentElement = document.querySelector(`[data-user-id="${obj.senderId}"]`);
+    if (parentElement) {
+        const userItemNotification = parentElement.querySelector(".user-item-notification");
+        if (userItemNotification) userItemNotification.remove();
+    }
+    stompClient.send("/app/notification/private.read", {}, JSON.stringify(obj));
+}
+
 function loadChatBox(senderId, receiverId) {
     if (chatSubscription) {
         chatSubscription.unsubscribe();
     }
     chatSubscription = stompClient.subscribe(`/queue/private/history/${receiverId}/sendFrom/${senderId}`, function (response) {
         let messages = JSON.parse(response.body);
+
+        let obj = {
+            receiverId: senderId,
+            senderId: receiverId
+        }
+
+        readMessage(obj);
+
         loadChatHistory(receiverId, messages);
     });
 }

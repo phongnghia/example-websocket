@@ -4,6 +4,7 @@ import { selectChatUser } from './message.js';
 let users = [];
 let data = [];
 let newUserCode = null;
+let notification = [];
 
 // ========== //
 
@@ -38,9 +39,17 @@ function loadMainPage() {
     if (getLocalStorageItem && getLocalStorageItem != null) currentUser = getLocalStorageItem;
 
     if (currentUser && currentUser.id) {
+
+        listNotification(currentUser.id);
+
         stompClient.subscribe("/topic/user", function (response) {
             users = JSON.parse(response.body);
             displayUserResponse(users);
+        });
+
+        stompClient.subscribe(`/notification/${currentUser.id}`, function (response) {
+            notification = JSON.parse(response.body);
+            loadNotification(notification);
         });
 
         // stompClient.subscribe(`/queue/private/${currentUser.id}`, function(response){
@@ -66,6 +75,10 @@ function loadMainPage() {
 function findAllUsers() {
     stompClient.send("/app/user.all", {}, JSON.stringify());
     return 0;
+}
+
+function listNotification(id) {
+    stompClient.send("/app/notification/private.all", {}, JSON.stringify(id));
 }
 
 function subscribePrivateMessage(id) {
@@ -245,6 +258,8 @@ function displayUserResponse(users) {
     } else {
         renderUserList();
     }
+
+    loadNotification(notification);
 }
 
 // Auto-resize textarea

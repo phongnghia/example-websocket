@@ -2,7 +2,6 @@ package com.phongnghia.example_websocket.controller.websocket;
 
 import com.phongnghia.example_websocket.dto.ResponseDto;
 import com.phongnghia.example_websocket.dto.user.UserDto;
-import com.phongnghia.example_websocket.service.message.SendMessageService;
 import com.phongnghia.example_websocket.service.user.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.MessageMapping;
