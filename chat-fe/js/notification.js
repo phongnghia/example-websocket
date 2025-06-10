@@ -18,7 +18,6 @@ function renderNotification(notifications) {
     }
 
     notifications.forEach(item => {
-        console.log(item.senderId);
         const userElement = document.querySelector(`[data-user-id="${item.senderId}"]`);
 
         if (userElement) {
