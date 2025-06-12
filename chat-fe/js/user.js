@@ -156,7 +156,7 @@ function createNewUser(newUser) {
             }
             newUserCode = data.data.userCode;
             document.getElementById('accessUserId').value = newUserCode;
-            showSuccess("Registration successful!. \nYour code should be remembered");
+            showSuccess("Registration successful! \nA access code has been sent to your email. \nPlease check your inbox");
             accessTab.click();
         })
         .catch(error => {
@@ -178,7 +178,7 @@ accessBtn.addEventListener('click', () => {
     }
 
     if (!isValidUUID(userId)) {
-        showError("Invalid user code. The code must start with 'CAP_' and be exactly 8 characters long (e.g., 'CAP_1234')");
+        showError("Invalid user code. The code must start with: Start with 'CAP_', Contain only uppercase letters/numbers and Be exactly 8 characters long");
         return 1;
     }
 

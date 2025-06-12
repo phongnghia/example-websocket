@@ -8,7 +8,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface UserService {
-    Optional<UserDto> addUser(UserDto userDto);
+    Optional<UserDto> addUser(UserDto userDto) throws MessagingException;
 
     Optional<UserDto> findUserById(UUID id);
 

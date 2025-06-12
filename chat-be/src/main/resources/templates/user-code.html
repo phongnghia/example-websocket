@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Account Verification</title>
+    <style>
+        body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+        .container { margin: 0 auto; padding: 20px; }
+        .header {
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+        }
+        .code {
+            font-size: 28px;
+            font-weight: bold;
+            color: #2c7be5;
+            margin: 25px 0;
+            letter-spacing: 3px;
+            text-align: center;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 6px;
+            display: inline-block;
+        }
+        .content {
+            padding: 15px 0;
+        }
+        .footer {
+            margin-top: 30px;
+            font-size: 12px;
+            color: #777;
+            border-top: 1px solid #eee;
+            padding-top: 15px;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h2>Hello, <span th:text="${username}">User</span>!</h2>
+    </div>
+
+    <div class="content">
+        <p>Thank you for registering with us. To access our application, please use the following code:</p>
+
+        <div class="code" th:text="${userCode}"></div>
+
+        <p><strong>Note: </strong> This code is valid and can be used to access the application. Please do not share this code with anyone.</p>
+
+        <p>If you didn't request this code, please ignore this email or contact our support team immediately.</p>
+    </div>
+
+    <div class="footer">
+        <p>Best regards,<br><strong>The Support Team</strong></p>
+    </div>
+</div>
+</body>
+</html>

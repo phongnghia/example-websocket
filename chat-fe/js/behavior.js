@@ -1,6 +1,6 @@
 // Validate UUID
 function isValidUUID(uuid) {
-    const regex = /^CAP_[0-9a-zA-Z]{8}$/i;
+    const regex = /^CAP_[0-9A-Z]{8}$/;
     return regex.test(uuid);
 }
 

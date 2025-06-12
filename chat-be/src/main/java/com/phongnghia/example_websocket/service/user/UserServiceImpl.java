@@ -32,7 +32,9 @@ public class UserServiceImpl implements UserService{
 
     private final SendMailService m_sendMailService;
 
-    private final String LOGIN_SUBJECT = "This email contains your verification code";
+    private final String LOGIN_SUBJECT = "Verify Your Account - One-Time Code Enclosed";
+
+    private final String USER_CODE_SUBJECT = "Here’s Your Access Code – Use It Now";
 
     private final String PREFIX_NAME = "CAP";
 
@@ -52,13 +54,13 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
-    public Optional<UserDto> addUser(UserDto userDto) {
+    public Optional<UserDto> addUser(UserDto userDto) throws MessagingException {
         userDto.setId(UUID.randomUUID());
 
         String code;
 
         while (true) {
-            code = String.format("%s_%s", PREFIX_NAME, GenerateCode.generateRandomCode());
+            code = String.format("%s_%s", PREFIX_NAME, GenerateCode.generateRandomCode()).toUpperCase();
 
             Optional<UserDto> checkCode = Optional.ofNullable(m_converter.entityToDto(m_userRepository.findByUserCode(code)));
 
@@ -70,6 +72,13 @@ public class UserServiceImpl implements UserService{
         userDto.setUserCode(code);
         UserEntity user = m_converter.dtoToEntity(userDto);
         m_userRepository.save(user);
+
+        Map<String, Object> variables = new HashMap<>();
+
+        variables.put("username", userDto.getUsername());
+        variables.put("userCode", code);
+
+        sendMailWithCode(userDto.getEmail(), USER_CODE_SUBJECT, variables, CommonStringName.SEND_USER_CODE_TEMPLATE.getStr());
         return Optional.of(userDto);
     }
 
@@ -106,7 +115,12 @@ public class UserServiceImpl implements UserService{
         VerifyCodeEntity verifyCodeEntity = VerifyCodeEntity.builder().id(UUID.randomUUID()).code(verifyCode).active(true).build();
         m_verifyCodeRepository.save(verifyCodeEntity);
 
-        sendVerifyCode(user.getUsername(), user.getEmail(), verifyCode);
+        Map<String, Object> variables = new HashMap<>();
+
+        variables.put("username", user.getUsername());
+        variables.put("verifyCode", verifyCode);
+
+        sendMailWithCode(user.getEmail(), LOGIN_SUBJECT, variables, CommonStringName.SEND_VERIFY_CODE_TEMPLATE.getStr());
 
         if (isLogin) user.setUserCode(null);
 
@@ -120,17 +134,12 @@ public class UserServiceImpl implements UserService{
         return m_userRepository.findByEmail(email) != null;
     }
 
-    private void sendVerifyCode(String username, String email, String verifyCode) throws MessagingException {
-
-        Map<String, Object> variables = new HashMap<>();
-
-        variables.put("username", username);
-        variables.put("verifyCode", verifyCode);
+    private void sendMailWithCode(String email, String subject, Map<String, Object> variables, String template) throws MessagingException {
 
         m_sendMailService.sendMailWithTemplate(
                 email,
-                LOGIN_SUBJECT,
-                CommonStringName.SEND_VERIFY_CODE_TEMPLATE.getStr(),
+                subject,
+                template,
                 variables);
     }
 
