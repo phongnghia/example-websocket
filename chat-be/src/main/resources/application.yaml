@@ -55,6 +55,7 @@ spring:
           auth: true
           starttls:
             enable: true
+          from: "${HOST_EMAIL_ADDRESS}"
   thymeleaf:
     prefix: classpath:/templates/
     suffix: .html
