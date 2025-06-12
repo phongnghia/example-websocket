@@ -68,3 +68,19 @@ id:sub-1
 
 > [!NOTE]
 > Update system design (Workflow, ...) - Later
+
+# Chat Application on Production
+
+![Access](img/chatapp-access.jpg)
+
+![Create](img/chatapp-create.jpg)
+
+![Verification code](img/chatapp-verification-code.jpg)
+
+![Main app](img/chatapp-main-app.jpg)
+
+![Messages](img/chatapp-message.jpg)
+
+![Mail user code](img/chatapp-mail-user-code.png)
+
+![Mail verification code](img/chatapp-mail-verification-code.png)
