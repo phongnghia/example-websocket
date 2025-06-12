@@ -124,6 +124,8 @@ function findVerifyCode(code) {
     }).then(response => response.json())
         .then(data => {
             if (data.success) {
+                accessBtn.className = accessBtn.className.replace(' loading', '');
+                accessBtn.disabled = false;
                 popupOverlay.style.display = 'none';
                 localStorage.setItem("user", JSON.stringify(currentUser));
                 loadMainPage();
@@ -132,7 +134,7 @@ function findVerifyCode(code) {
                 showErrorMessage(true);
             }
         }).catch(error => {
-            showErrorMessage(true);
+            showErrorMessage(error);
         });
 }
 
@@ -169,20 +171,28 @@ function createNewUser(newUser) {
 // ========== //
 
 // Access function
-accessBtn.addEventListener('click', () => {
+accessBtn.addEventListener('click', async () => {
     const userId = document.getElementById('accessUserId').value;
 
-    if (!userId) {
-        showError("User code is required");
-        return 1;
-    }
+    accessBtn.className += ' loading';
+    accessBtn.disabled = true;
+    try {
+        if (!userId) {
+            showError("User code is required");
+            return 1;
+        }
 
-    if (!isValidUUID(userId)) {
-        showError("Invalid user code. The code must start with: Start with 'CAP_', Contain only uppercase letters/numbers and Be exactly 8 characters long");
-        return 1;
-    }
+        if (!isValidUUID(userId)) {
+            showError("Invalid user code. The code must start with: Start with 'CAP_', Contain only uppercase letters/numbers and Be exactly 8 characters long");
+            return 1;
+        }
 
-    findUserById(userId);
+        await findUserById(userId);
+    } catch (error) {
+        accessBtn.className = accessBtn.className.replace(' loading', '');
+        accessBtn.disabled = false;
+        showError("An error occurred while processing your request");
+    }
 });
 
 // Create function
@@ -194,32 +204,42 @@ createBtn.addEventListener('click', () => {
 
     console.log(`Creating user: ${username}, ${fullName}, ${description}`);
 
-    if (!username) {
-        showError("Username is required");
-        createTab.click();
-        return 1;
-    }
+    createBtn.className += ' loading';
+    createBtn.disabled = true;
 
-    if (!email) {
-        showError("Email is required");
-        createTab.click();
-        return 1;
-    }
+    try {
+        if (!username) {
+            showError("Username is required");
+            createTab.click();
+            return 1;
+        }
 
-    if (!validateEmail(email)) {
-        showError("Email is invalid");
-        createTab.click();
-        return 1;
-    }
+        if (!email) {
+            showError("Email is required");
+            createTab.click();
+            return 1;
+        }
 
-    var newUser = {
-        username: username,
-        email: email,
-        fullName: fullName,
-        description: description
-    }
+        if (!validateEmail(email)) {
+            showError("Email is invalid");
+            createTab.click();
+            return 1;
+        }
 
-    createNewUser(newUser);
+        var newUser = {
+            username: username,
+            email: email,
+            fullName: fullName,
+            description: description
+        }
+
+        createNewUser(newUser);
+    } catch (error) {
+        createBtn.className = accessBtn.className.replace(' loading', '');
+        createBtn.disabled = false;
+        showError("An error occurred while processing your request");
+
+    }
 });
 
 // Logout button
@@ -301,6 +321,8 @@ messageInput.addEventListener('input', function () {
 // Cancel Popup
 cancelBtn.addEventListener('click', function () {
     popupOverlay.style.display = 'none';
+    accessBtn.className = accessBtn.className.replace(' loading', '');
+    accessBtn.disabled = false;
 });
 
 // Handle confirm
@@ -335,6 +357,8 @@ function validateCode() {
 popupOverlay.addEventListener('click', function (e) {
     if (e.target === popupOverlay) {
         popupOverlay.style.display = 'none';
+        accessBtn.className = accessBtn.className.replace(' loading', '');
+        accessBtn.disabled = false;
     }
 });
 
