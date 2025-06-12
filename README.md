@@ -69,7 +69,7 @@ id:sub-1
 > [!NOTE]
 > Update system design (Workflow, ...) - Later
 
-# Chat Application on Production
+# Chat Application in Production
 
 ![Access](img/chatapp-access.jpg)
 
