@@ -63,6 +63,8 @@ id:sub-1
 
 ![Notification](img/notification.png)
 
+![Send mail](img/send-mail.png)
+
 
 > [!NOTE]
 > Update system design (Workflow, ...) - Later

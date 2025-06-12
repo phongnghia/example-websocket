@@ -552,3 +552,114 @@ body {
     cursor: pointer;
     transition: var(--transition);
 }
+
+
+.popup-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.4);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    backdrop-filter: blur(2px);
+}
+
+.popup-container {
+    background-color: white;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    width: 380px;
+    max-width: 90%;
+    text-align: center;
+    border: 1px solid #e1e4e8;
+}
+
+.popup-title {
+    font-size: 22px;
+    font-weight: 600;
+    margin-bottom: 18px;
+    color: #1a1a1a;
+}
+
+.code-input {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 25px;
+}
+
+.code-input input {
+    width: 100%;
+    padding: 14px 18px;
+    font-size: 12px;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    text-align: center;
+    letter-spacing: 1.5px;
+    transition: all 0.2s ease;
+    background-color: #f9fafb;
+}
+
+.code-input input:focus {
+    border-color: #3b82f6;
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+    background-color: white;
+}
+
+.buttons {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.btn {
+    padding: 12px 24px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    font-size: 13px;
+}
+
+.btn-confirm {
+    background-color: #3b82f6;
+    color: white;
+    flex-grow: 1;
+}
+
+.btn-confirm:hover {
+    background-color: #2563eb;
+}
+
+.btn-cancel {
+    background-color: white;
+    color: #6b7280;
+    border: 1px solid #d1d5db;
+}
+
+.btn-cancel:hover {
+    background-color: #f3f4f6;
+    border-color: #9ca3af;
+}
+
+.code-hint {
+    font-size: 14px;
+    color: #6b7280;
+    margin-bottom: 20px;
+    line-height: 1.5;
+}
+
+.error-message {
+    color: #ef4444;
+    font-size: 14px;
+    margin-top: 12px;
+    display: none;
+    font-weight: 500;
+    margin: 20px 0;
+}

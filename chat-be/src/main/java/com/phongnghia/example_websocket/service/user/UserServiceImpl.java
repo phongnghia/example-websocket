@@ -2,9 +2,14 @@ package com.phongnghia.example_websocket.service.user;
 
 import com.phongnghia.example_websocket.dto.user.UserDto;
 import com.phongnghia.example_websocket.entity.user.UserEntity;
+import com.phongnghia.example_websocket.entity.code.VerifyCodeEntity;
 import com.phongnghia.example_websocket.mapper.WebSocketConverter;
 import com.phongnghia.example_websocket.repository.UserRepository;
+import com.phongnghia.example_websocket.repository.VerifyCodeRepository;
+import com.phongnghia.example_websocket.service.mail.SendMailService;
+import com.phongnghia.example_websocket.utils.CommonStringName;
 import com.phongnghia.example_websocket.utils.GenerateCode;
+import jakarta.mail.MessagingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
@@ -13,13 +18,21 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import java.util.Map;
+import java.util.HashMap;
 
 @Service
 public class UserServiceImpl implements UserService{
 
     private final UserRepository m_userRepository;
 
+    private final VerifyCodeRepository m_verifyCodeRepository;
+
     private final WebSocketConverter m_converter;
+
+    private final SendMailService m_sendMailService;
+
+    private final String LOGIN_SUBJECT = "This email contains your verification code";
 
     private final String PREFIX_NAME = "CAP";
 
@@ -28,10 +41,14 @@ public class UserServiceImpl implements UserService{
     @Autowired
     public UserServiceImpl(WebSocketConverter converter,
                            UserRepository userRepository,
-                           SimpMessagingTemplate simpMessagingTemplate){
+                           VerifyCodeRepository verifyCodeRepository,
+                           SimpMessagingTemplate simpMessagingTemplate,
+                           SendMailService sendMailService){
         this.m_converter = converter;
         this.m_userRepository = userRepository;
+        this.m_verifyCodeRepository = verifyCodeRepository;
         this.m_simpMessagingTemplate = simpMessagingTemplate;
+        this.m_sendMailService = sendMailService;
     }
 
     @Override
@@ -77,11 +94,21 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
-    public Optional<UserDto> findUserByCode(String userCode, boolean isLogin) {
+    public Optional<UserDto> findUserByCode(String userCode, boolean isLogin) throws MessagingException {
 
         UserEntity user = m_userRepository.findByUserCode(userCode);
 
-        if (isLogin && user != null) user.setUserCode(null);
+        if (user == null) {
+            return Optional.empty();
+        }
+
+        String verifyCode = GenerateCode.generateRandomCode().toUpperCase();
+        VerifyCodeEntity verifyCodeEntity = VerifyCodeEntity.builder().id(UUID.randomUUID()).code(verifyCode).active(true).build();
+        m_verifyCodeRepository.save(verifyCodeEntity);
+
+        sendVerifyCode(user.getUsername(), user.getEmail(), verifyCode);
+
+        if (isLogin) user.setUserCode(null);
 
         return Optional.ofNullable(m_converter
                 .entityToDto(user)
@@ -91,6 +118,20 @@ public class UserServiceImpl implements UserService{
     @Override
     public boolean isEmailExists(String email) {
         return m_userRepository.findByEmail(email) != null;
+    }
+
+    private void sendVerifyCode(String username, String email, String verifyCode) throws MessagingException {
+
+        Map<String, Object> variables = new HashMap<>();
+
+        variables.put("username", username);
+        variables.put("verifyCode", verifyCode);
+
+        m_sendMailService.sendMailWithTemplate(
+                email,
+                LOGIN_SUBJECT,
+                CommonStringName.SEND_VERIFY_CODE_TEMPLATE.getStr(),
+                variables);
     }
 
 }

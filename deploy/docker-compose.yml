@@ -21,7 +21,7 @@ services:
           memory: "2G"
           cpus: 0.8
   backend:
-    image: phongnghia/example-websocket:0.6
+    image: phongnghia/example-websocket:0.7
     container_name: backend
     ports:
       - "8443:8443"
@@ -36,7 +36,7 @@ services:
       database:
         condition: service_healthy
   front-end:
-    image: phongnghia/example-websocket-frontend:0.2 #nginx:1.28.0-perl
+    image: phongnghia/example-websocket-frontend:0.3 #nginx:1.28.0-perl
     container_name: front-end
     ports:
       - "80:80"

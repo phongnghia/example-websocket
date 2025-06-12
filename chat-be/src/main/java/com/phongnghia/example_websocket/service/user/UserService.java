@@ -1,6 +1,7 @@
 package com.phongnghia.example_websocket.service.user;
 
 import com.phongnghia.example_websocket.dto.user.UserDto;
+import jakarta.mail.MessagingException;
 
 import java.util.List;
 import java.util.Optional;
@@ -13,7 +14,7 @@ public interface UserService {
 
     List<Optional<UserDto>> findAll();
 
-    Optional<UserDto> findUserByCode(String userCode, boolean isLogin);
+    Optional<UserDto> findUserByCode(String userCode, boolean isLogin) throws MessagingException;
 
     boolean isEmailExists(String email);
 }

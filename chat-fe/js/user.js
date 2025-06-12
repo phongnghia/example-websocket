@@ -28,6 +28,13 @@ const currentUserName = document.getElementById('currentUserName');
 const currentUserName_us = document.getElementById('currentUserName_us');
 const currentUserId = document.getElementById('currentUserId');
 
+// Verify code
+const popupOverlay = document.getElementById('popupOverlay');
+const verificationCode = document.getElementById('verificationCode');
+const confirmBtn = document.getElementById('confirmBtn');
+const cancelBtn = document.getElementById('cancelBtn');
+const errorMessage = document.getElementById('errorMessage');
+
 // WebSocket connection
 stompClient.connect({}, function (frame) {
     loadMainPage();
@@ -94,16 +101,39 @@ function findUserById(userCode) {
             if (!data.success) {
                 showError("Oops! We couldn't find and account with that user code!");
                 accessTab.click();
+                return;
             }
+            let message = `Please enter the 8-digit code we sent to:\n${data.data.email}`;
+            let codeHint = document.getElementById("code-hint");
+            codeHint.innerText = message;
+
             currentUser = data.data;
-            localStorage.setItem("user", JSON.stringify(currentUser));
-            loadMainPage();
+            openPopup();
         })
         .catch(error => {
             showError("Oops! Something went wrong on our end!");
             // console.error(error);
             accessTab.click();
+            return;
         })
+}
+
+function findVerifyCode(code) {
+    fetch(apiURL + "/verify/" + code, {
+        method: 'GET'
+    }).then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                popupOverlay.style.display = 'none';
+                localStorage.setItem("user", JSON.stringify(currentUser));
+                loadMainPage();
+            } else {
+                console.log(data.message);
+                showErrorMessage(true);
+            }
+        }).catch(error => {
+            showErrorMessage(true);
+        });
 }
 
 function createNewUser(newUser) {
@@ -267,3 +297,59 @@ messageInput.addEventListener('input', function () {
     this.style.height = 'auto';
     this.style.height = (this.scrollHeight) + 'px';
 });
+
+// Cancel Popup
+cancelBtn.addEventListener('click', function () {
+    popupOverlay.style.display = 'none';
+});
+
+// Handle confirm
+confirmBtn.addEventListener('click', function () {
+    validateCode();
+});
+
+// Handle confirm with enter
+verificationCode.addEventListener('keyup', function (e) {
+    if (e.key === 'Enter') {
+        validateCode();
+    }
+});
+
+// Convert input to uppercase
+verificationCode.addEventListener('input', function () {
+    this.value = this.value.toUpperCase();
+});
+
+// Validate code
+function validateCode() {
+    const code = verificationCode.value.trim();
+
+    if (code.length === 8 && /^[A-Z0-9]+$/.test(code)) {
+        findVerifyCode(code);
+    } else {
+        showErrorMessage(false);
+    }
+}
+
+// Handle close when click anywhere
+popupOverlay.addEventListener('click', function (e) {
+    if (e.target === popupOverlay) {
+        popupOverlay.style.display = 'none';
+    }
+});
+
+function showErrorMessage(isValidate) {
+    if (isValidate) {
+        popupOverlay.style.display = 'flex';
+        verificationCode.value = '';
+    }
+    errorMessage.style.display = 'block';
+    verificationCode.focus();
+}
+
+function openPopup() {
+    popupOverlay.style.display = 'flex';
+    verificationCode.value = '';
+    errorMessage.style.display = 'none';
+    verificationCode.focus();
+}

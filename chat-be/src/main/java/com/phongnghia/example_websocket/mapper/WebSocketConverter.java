@@ -1,10 +1,12 @@
 package com.phongnghia.example_websocket.mapper;
 
 import com.phongnghia.example_websocket.dto.ProductDto;
+import com.phongnghia.example_websocket.dto.VerifyCodeDto;
 import com.phongnghia.example_websocket.dto.message.UserMessageDto;
 import com.phongnghia.example_websocket.dto.status.MessageNotificationDto;
 import com.phongnghia.example_websocket.dto.user.UserDto;
 import com.phongnghia.example_websocket.entity.ProductEntity;
+import com.phongnghia.example_websocket.entity.code.VerifyCodeEntity;
 import com.phongnghia.example_websocket.entity.message.UserMessageEntity;
 import com.phongnghia.example_websocket.entity.status.MessageNotification;
 import com.phongnghia.example_websocket.entity.user.UserEntity;
@@ -31,5 +33,7 @@ public interface WebSocketConverter {
     MessageNotification dtoToEntity(MessageNotificationDto messageNotificationDto);
 
     MessageNotificationDto entityToDto(MessageNotification messageNotification);
+
+    VerifyCodeDto entityToDto(VerifyCodeEntity verifyCodeEntity);
 
 }

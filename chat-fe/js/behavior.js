@@ -5,8 +5,8 @@ function isValidUUID(uuid) {
 }
 
 function validateEmail(email) {
-  const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-  return re.test(String(email).toLowerCase());
+    const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    return re.test(String(email).toLowerCase());
 }
 
 // Tab switching
@@ -28,14 +28,14 @@ createTab.addEventListener('click', () => {
 function showError(message) {
     const notificationOverlay = document.getElementById('notificationOverlay');
     const notificationContent = document.getElementById('notificationContent');
-    
+
     notificationContent.textContent = message;
     notificationOverlay.classList.add('active');
-    
+
     document.getElementById('notificationClose').addEventListener('click', hideError);
     document.getElementById('notificationButton').addEventListener('click', hideError);
-    
-    notificationOverlay.addEventListener('click', function(e) {
+
+    notificationOverlay.addEventListener('click', function (e) {
         if (e.target === notificationOverlay) {
             hideError();
         }
@@ -50,13 +50,13 @@ function hideError() {
 function showSuccess(message) {
     const overlay = document.getElementById('successOverlay');
     const content = document.getElementById('successContent');
-    
+
     content.textContent = message;
     overlay.classList.add('active');
-    
+
     overlay.querySelector('.notification-close').onclick = () => hideSuccess();
     overlay.querySelector('.notification-button').onclick = () => hideSuccess();
-    
+
     overlay.onclick = (e) => {
         if (e.target === overlay) hideSuccess();
     };

@@ -1,8 +1,11 @@
 package com.phongnghia.example_websocket.controller.rest;
 
 import com.phongnghia.example_websocket.dto.ResponseDto;
+import com.phongnghia.example_websocket.dto.VerifyCodeDto;
 import com.phongnghia.example_websocket.dto.user.UserDto;
+import com.phongnghia.example_websocket.service.common.CommonService;
 import com.phongnghia.example_websocket.service.user.UserService;
+import jakarta.mail.MessagingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,9 +27,12 @@ public class UserRestController {
 
     private final UserService m_userService;
 
+    private final CommonService m_commonService;
+
     @Autowired
-    public UserRestController(UserService userService) {
+    public UserRestController(UserService userService, CommonService commonService) {
         this.m_userService = userService;
+        this.m_commonService = commonService;
     }
 
     @GetMapping("/find/{id}")
@@ -41,7 +47,7 @@ public class UserRestController {
     }
 
     @GetMapping("/login/{userCode}")
-    public ResponseEntity<?> login(@PathVariable String userCode) {
+    public ResponseEntity<?> login(@PathVariable String userCode) throws MessagingException {
         Optional<UserDto> userDto = m_userService.findUserByCode(userCode, true);
 
         if (userDto.isEmpty()) {
@@ -49,6 +55,18 @@ public class UserRestController {
         }
 
         return ResponseEntity.status(HttpStatus.OK).body(ResponseDto.builder().isSuccess(true).data(userDto).build());
+    }
+
+    @GetMapping("/verify/{verifyCode}")
+    public ResponseEntity<?> verifyCode(@PathVariable String verifyCode) {
+
+        VerifyCodeDto dto = m_commonService.findCode(verifyCode);
+
+        if (dto == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ResponseDto.builder().isSuccess(false).message("Unverified").build());
+        }
+
+        return ResponseEntity.status(HttpStatus.OK).body(ResponseDto.builder().isSuccess(true).message("Verified").build());
     }
 
     @PostMapping("/add")
